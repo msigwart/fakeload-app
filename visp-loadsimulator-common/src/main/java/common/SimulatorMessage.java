@@ -1,5 +1,7 @@
 package common;
 
+import common.enums.SimulationType;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;

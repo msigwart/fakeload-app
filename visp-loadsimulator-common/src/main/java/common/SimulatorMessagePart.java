@@ -1,5 +1,8 @@
 package common;
 
+import common.enums.SimulationType;
+import common.util.Constants;
+
 import java.io.Serializable;
 
 /**

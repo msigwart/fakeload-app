@@ -1,4 +1,4 @@
-package common;
+package common.enums;
 
 /**
  * Created by martensigwart on 04.05.17.
