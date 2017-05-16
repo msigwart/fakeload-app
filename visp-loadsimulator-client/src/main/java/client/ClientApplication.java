@@ -1,13 +1,18 @@
 package client;
 
 import common.*;
+import common.enums.CpuSimulationMethod;
+import common.enums.RamSimulationMethod;
+import common.enums.SimulationType;
+import common.producer.LoadSimulatorProducer;
+import common.util.Constants;
 import org.apache.commons.cli.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import static common.Constants.DEFAULT_METHOD;
-import static common.Constants.DURATION_MAX;
+import static common.util.Constants.DEFAULT_METHOD;
+import static common.util.Constants.DURATION_MAX;
 
 
 /**
@@ -15,14 +20,11 @@ import static common.Constants.DURATION_MAX;
  */
 public class ClientApplication {
 
-    private final static String DEFAULT_QUEUE_NAME = "default";
-    private final static String DEFAULT_HOST = "localhost";
-
 
     public static void main(String[] args) {
 
-        String host = DEFAULT_HOST;
-        String queue = DEFAULT_QUEUE_NAME;
+        String host = Constants.DEFAULT_HOST;
+        String queue = Constants.DEFAULT_QUEUE_NAME;
 
         // Create parser
         CommandLineParser parser = new DefaultParser();
@@ -51,7 +53,7 @@ public class ClientApplication {
             }
 
             // Create new connection
-            LoadSimulatorClient client = new LoadSimulatorClient();
+            LoadSimulatorProducer client = new LoadSimulatorProducer();
             client.connect(host, queue);
 
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -152,7 +154,7 @@ public class ClientApplication {
         System.out.print("Enter simulation method (");
         switch (type) {
             case CPU:
-                for (int i=0; i<CpuSimulationMethod.values().length; i++) {
+                for (int i = 0; i< CpuSimulationMethod.values().length; i++) {
                     System.out.printf("%s=%d", CpuSimulationMethod.values()[i], i);
                     if (i<CpuSimulationMethod.values().length-1) {
                         System.out.printf(", ");
@@ -160,7 +162,7 @@ public class ClientApplication {
                 }
                 break;
             case RAM:
-                for (int i=0; i<RamSimulationMethod.values().length; i++) {
+                for (int i = 0; i< RamSimulationMethod.values().length; i++) {
                     System.out.printf("%s=%d", RamSimulationMethod.values()[i], i);
                     if (i<RamSimulationMethod.values().length-1) {
                         System.out.printf(", ");
