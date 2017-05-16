@@ -4,7 +4,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import common.Constants;
-import common.LoadSimulatorMessage;
+import common.SimulatorMessage;
 import common.SimulationType;
 
 import java.io.IOException;
@@ -43,15 +43,10 @@ public class LoadSimulatorClient {
 
     }
 
-    public void sendLoadSimulationMessage(SimulationType type, Integer workload,
-                                          Integer duration, Integer method) throws IOException {
+    public void sendLoadSimulationMessage(SimulatorMessage message) throws IOException {
 
-        LoadSimulatorMessage message = new LoadSimulatorMessage(type, workload, duration, method);
         channel.basicPublish("", queue, null, message.getBytes());
         System.out.println(" [x] Sent '" + message + "'");
     }
 
-    public void sendLoadSimulationMessage(SimulationType type, Integer workload, Integer duration) throws IOException {
-        sendLoadSimulationMessage(type, workload, duration, Constants.DEFAULT_METHOD);
-    }
 }

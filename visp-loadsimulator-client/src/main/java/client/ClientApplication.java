@@ -1,8 +1,6 @@
 package client;
 
-import common.CpuSimulationMethod;
-import common.RamSimulationMethod;
-import common.SimulationType;
+import common.*;
 import org.apache.commons.cli.*;
 
 import java.io.BufferedReader;
@@ -60,38 +58,67 @@ public class ClientApplication {
             while (true) {
 
                 try {
-                    SimulationType type;
-                    String input;
-                    Integer workload, duration, method;
-
-                    // get type
-                    promptSimulationType();
-                    input = br.readLine();
-                    type = getValidType(input);
-
-                    // get workload
-                    System.out.print("Enter workload (in %):");
-                    input = br.readLine();
-                    workload = getValidWorkload(input);
+                    System.out.printf("++ NEW SIMULATOR MESSAGE ++\n");
+                    SimulatorMessage message = new SimulatorMessage();
+                    boolean messageDone = false;
 
                     // get duration
-                    System.out.print("Enter duration (in seconds):");
-                    input = br.readLine();
-                    duration = getValidDuration(input);
+                    System.out.printf("Enter duration (in seconds):");
+                    String input = br.readLine();
+                    Integer duration = getValidDuration(input);
+                    message.setDuration(duration);
 
-                    // get method
-                    promptSimulationMethod(type);
-                    input = br.readLine();
-                    method = getValidSimulationMethod(type, input);
+                    while (!messageDone) {
+
+                        if (message.getParts().size() != 0) {
+                            System.out.printf("Are you done? [y/n]:");
+                            input = br.readLine();
+                            if (input.equals("y")) {
+                                messageDone = true;
+                                continue;
+                            }
+                        }
+
+                        SimulationType type;
+                        Integer workload, method;
+
+                        // get type
+                        promptSimulationType();
+                        input = br.readLine();
+                        type = getValidType(input);
+
+                        // get workload
+                        System.out.print("Enter workload (in %):");
+                        input = br.readLine();
+                        workload = getValidWorkload(input);
+
+                        // get method
+                        promptSimulationMethod(type);
+                        input = br.readLine();
+                        method = getValidSimulationMethod(type, input);
+
+                        SimulatorMessagePart messagePart = new SimulatorMessagePart(type, workload, method);
+
+                        if (message.getParts().containsKey(type)) {
+                            System.out.printf("Message already contains a part of type %s. Overwrite? [y/n]:", type);
+                            input = br.readLine();
+                            if (!input.equals("y")) {
+                                continue;
+                            }
+                        }
+                        message.addPart(messagePart);
+                        System.out.printf("Added part %s to message\n", messagePart);
+
+                    }
 
                     // send message?
-                    System.out.printf("Send message: type=%s, workload=%d, duration=%d, method=%d? [y/n]:", type, workload, duration, method);
+                    System.out.printf("Send message: %s? [y/n]:", message);
                     input = br.readLine();
                     if (!input.equals("y")) {
                         continue;
                     }
 
-                    client.sendLoadSimulationMessage(type, workload, duration, method);
+                    client.sendLoadSimulationMessage(message);
                     System.out.printf("Successfully sent message\n");
 
 
