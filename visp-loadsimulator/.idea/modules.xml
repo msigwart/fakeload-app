@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../visp-loadsimulator-client/loadsimulator-client.iml" filepath="$PROJECT_DIR$/../visp-loadsimulator-client/loadsimulator-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../visp-loadsimulator-common/loadsimulator-common.iml" filepath="$PROJECT_DIR$/../visp-loadsimulator-common/loadsimulator-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/visp-loadsimulator.iml" filepath="$PROJECT_DIR$/visp-loadsimulator.iml" />
+    </modules>
+  </component>
+</project>
