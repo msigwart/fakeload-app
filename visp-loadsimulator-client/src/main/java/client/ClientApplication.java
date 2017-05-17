@@ -75,7 +75,7 @@ public class ClientApplication {
                         if (message.getParts().size() != 0) {
                             System.out.printf("Are you done? [y/n]:");
                             input = br.readLine();
-                            if (input.equals("y")) {
+                            if (input.equals("y") || input.equals("")) {
                                 messageDone = true;
                                 continue;
                             }
@@ -116,7 +116,7 @@ public class ClientApplication {
                     // send message?
                     System.out.printf("Send message: %s? [y/n]:", message);
                     input = br.readLine();
-                    if (!input.equals("y")) {
+                    if (!input.equals("y") && !input.equals("") ) {
                         continue;
                     }
 
@@ -178,6 +178,10 @@ public class ClientApplication {
 
 
     private static SimulationType getValidType(String input) throws IllegalArgumentException {
+
+        if (input.equals("")) {
+            return Constants.DEFAULT_SIMULATION_TYPE;
+        }
         Integer type;
         try {
             type = Integer.parseInt(input);
@@ -195,7 +199,12 @@ public class ClientApplication {
 
 
     private static Integer getValidWorkload(String input) {
+
+        if (input.equals("")) {
+            return Constants.DEFAULT_WORKLOAD;
+        }
         Integer workload;
+
         try {
             workload = Integer.parseInt(input);
         } catch (NumberFormatException e) {
@@ -210,6 +219,9 @@ public class ClientApplication {
 
 
     private static Integer getValidDuration(String input) {
+        if (input.equals("")) {
+            return Constants.DEFAULT_DURATION;
+        }
         Integer duration;
         try {
             duration = Integer.parseInt(input);
@@ -225,25 +237,22 @@ public class ClientApplication {
 
 
     private static Integer getValidSimulationMethod(SimulationType type, String input) {
+        if (input.equals("")) {
+            return Constants.DEFAULT_METHOD;
+        }
         Integer method;
         try {
-
-            if (!input.equals("")) {
-                method = Integer.parseInt(input);
-                switch (type) {
-                    case CPU:
-                        method = CpuSimulationMethod.values()[method].ordinal();
-                        break;
-                    case RAM:
-                        method = RamSimulationMethod.values()[method].ordinal();
-                        break;
-                    default:
-                        method = DEFAULT_METHOD;
-                        break;
-                }
-
-            } else {
-                method = DEFAULT_METHOD;
+            method = Integer.parseInt(input);
+            switch (type) {
+                case CPU:
+                    method = CpuSimulationMethod.values()[method].ordinal();
+                    break;
+                case RAM:
+                    method = RamSimulationMethod.values()[method].ordinal();
+                    break;
+                default:
+                    method = DEFAULT_METHOD;
+                    break;
             }
 
         } catch (NumberFormatException e) {
