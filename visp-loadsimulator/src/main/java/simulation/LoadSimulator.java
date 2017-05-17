@@ -3,12 +3,9 @@ package simulation;
 import common.SimulatorMessage;
 import common.consumer.LoadSimulatorConsumer;
 import common.util.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 

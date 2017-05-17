@@ -3,7 +3,6 @@ package common;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
