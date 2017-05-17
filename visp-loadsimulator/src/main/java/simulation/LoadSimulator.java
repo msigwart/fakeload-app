@@ -3,6 +3,8 @@ package simulation;
 import common.SimulatorMessage;
 import common.consumer.LoadSimulatorConsumer;
 import common.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,7 @@ import java.util.concurrent.TimeoutException;
 @Component
 public class LoadSimulator implements CommandLineRunner {
 
+    private static Logger log = LoggerFactory.getLogger(LoadSimulator.class);
 
     @Override
     public void run(String... args) throws Exception {
@@ -27,21 +30,18 @@ public class LoadSimulator implements CommandLineRunner {
             consumer.connect(host, queue);
 
             while (true) {
-                if (consumer == null) {
-                    System.out.println("This is strange");
-                }
                 SimulatorMessage message = consumer.retrieveSimulatorMessage();
                 if (message != null) {
-                    System.out.printf("Retrieved simulator message %s\n", message);
+                    log.info(String.format("Retrieved simulator message %s", message));
 
                 } else {
-                    System.out.printf("No message available, sleeping...\n");
+                    log.info("No message available, sleeping...");
                     Thread.sleep(5000);
                 }
             }
         } catch (InterruptedException | IOException | TimeoutException e) {
-            System.out.println("Encountered a problem");
-            e.printStackTrace();
+            log.warn("Caught Exception: " + e.getMessage());
+//            e.printStackTrace();
         }
     }
 
