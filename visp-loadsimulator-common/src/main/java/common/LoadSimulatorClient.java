@@ -3,6 +3,7 @@ package common;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -10,7 +11,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * Created by martensigwart on 16.05.17.
  */
-public class LoadSimulatorClient {
+public abstract class LoadSimulatorClient {
 
     private final ConnectionFactory factory;
     private Connection connection;
