@@ -74,6 +74,7 @@ public class LoadSimulator implements ILoadSimulator {
 
             } catch (TimeoutException e) {
                 log.info("CPU Simulation ended.");
+                future.cancel(true);
 
             } catch (InterruptedException e) {
                 e.printStackTrace();

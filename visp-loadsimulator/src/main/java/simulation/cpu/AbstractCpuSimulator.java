@@ -17,13 +17,13 @@ public abstract class AbstractCpuSimulator implements ICpuSimulator, Callable<St
     @Override
     public String call() throws Exception {
 
-        while (true) {
-            long time = System.currentTimeMillis() + workload;
-            while (System.currentTimeMillis() < time) {
-                simulateCpu();
+            while (true) {
+                long time = System.currentTimeMillis() + workload;
+                while (System.currentTimeMillis() < time) {
+                    simulateCpu();
+                }
+                Thread.sleep(100 - workload);
             }
-            Thread.sleep(100 - workload);
-        }
 
     }
 

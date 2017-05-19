@@ -34,8 +34,9 @@ public class SimulationController implements CommandLineRunner {
             LoadSimulatorConsumer consumer = new LoadSimulatorConsumer();
             consumer.connect(host, queue);
 
+            SimulatorMessage message;
             while (true) {
-                SimulatorMessage message = consumer.retrieveSimulatorMessage();
+                message = consumer.retrieveSimulatorMessage();
                 if (message != null) {
                     log.info(String.format("Retrieved simulator message %s", message));
 
