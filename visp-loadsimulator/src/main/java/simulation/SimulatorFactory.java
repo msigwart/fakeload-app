@@ -2,7 +2,7 @@ package simulation;
 
 import common.SimulatorMessagePart;
 import common.enums.SimulationType;
-import simulation.cpu.CpuSimulator;
+import simulation.cpu.FibonacciCpuSimulator;
 import simulation.cpu.ICpuSimulator;
 import simulation.ram.IRamSimulator;
 import simulation.ram.RamSimulator;
@@ -22,7 +22,7 @@ public class SimulatorFactory {
             case 1:
             case 0:
             default:
-                cpuSimulator = new CpuSimulator(messagePart.getWorkload());
+                cpuSimulator = new FibonacciCpuSimulator(messagePart.getWorkload());
                 break;
         }
 

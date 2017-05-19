@@ -5,10 +5,13 @@ import common.enums.SimulationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import simulation.cpu.AbstractCpuSimulator;
 import simulation.cpu.ICpuSimulator;
 import simulation.ram.IRamSimulator;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.concurrent.*;
 
 /**
  * Created by martensigwart on 17.05.17.
@@ -29,7 +32,7 @@ public class LoadSimulator implements ILoadSimulator {
 
     private SimulatorFactory simulatorFactory;
     private Integer duration;
-    private ICpuSimulator cpuSimulator;
+    private AbstractCpuSimulator cpuSimulator;
     private IRamSimulator ramSimulator;
 
 
@@ -44,7 +47,7 @@ public class LoadSimulator implements ILoadSimulator {
 
         // setup CPU Simulator
         if (message.getParts().containsKey(SimulationType.CPU)) {
-            cpuSimulator = simulatorFactory.createCpuSimulator(message.getParts().get(SimulationType.CPU));
+            cpuSimulator = (AbstractCpuSimulator)simulatorFactory.createCpuSimulator(message.getParts().get(SimulationType.CPU));
         }
 
 
@@ -57,12 +60,28 @@ public class LoadSimulator implements ILoadSimulator {
 
     @Override
     public void runSimulation() {
+        log.info("++ Simulation started ++");
         if (ramSimulator != null) {
             ramSimulator.allocateMemory();
         }
 
         if (cpuSimulator != null) {
-            cpuSimulator.simulateCpu();
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Future<String> future = executor.submit(cpuSimulator);
+            try {
+                log.info(String.format("Running CPU Simulation for %d seconds...", duration));
+                future.get(duration, TimeUnit.SECONDS);
+
+            } catch (TimeoutException e) {
+                log.info("CPU Simulation ended.");
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
         }
+        log.info("++ Simulation ended ++");
     }
 }
