@@ -34,6 +34,7 @@ public class SimulationController implements CommandLineRunner {
             LoadSimulatorConsumer consumer = new LoadSimulatorConsumer();
             consumer.connect(host, queue);
 
+            log.info("Waiting for messages...");
             SimulatorMessage message;
             while (true) {
                 message = consumer.retrieveSimulatorMessage();
@@ -43,8 +44,9 @@ public class SimulationController implements CommandLineRunner {
                     loadSimulator.setUpSimulation(message);
                     loadSimulator.runSimulation();
 
+                    log.info("Waiting for messages...");
+
                 } else {
-                    log.info("No message available, sleeping...");
                     Thread.sleep(5000);
                 }
             }
