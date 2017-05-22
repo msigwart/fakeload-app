@@ -22,15 +22,6 @@ public class LoadSimulator implements ILoadSimulator {
 
     private static final Logger log = LoggerFactory.getLogger(LoadSimulator.class);
 
-    private static LoadSimulator instance;
-
-    public static LoadSimulator getInstance() {
-        if (instance == null) {
-            instance = new LoadSimulator();
-        }
-        return instance;
-    }
-
     private SimulatorFactory simulatorFactory;
     private Integer duration;
     private Integer noCores;
