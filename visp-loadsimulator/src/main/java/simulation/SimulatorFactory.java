@@ -7,6 +7,10 @@ import simulation.cpu.ICpuSimulator;
 import simulation.ram.IRamSimulator;
 import simulation.ram.RamSimulator;
 
+import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
+import java.util.List;
+
 /**
  * Created by martensigwart on 17.05.17.
  */
@@ -45,5 +49,16 @@ public class SimulatorFactory {
         }
 
         return ramSimulator;
+    }
+
+    public List<ICpuSimulator> createCpuSimulators(int no, SimulatorMessagePart simulatorMessagePart) {
+        if (no < 1) {
+            throw new IllegalArgumentException("Number of CpuSimulators to create has to be greater than zero.");
+        }
+        List<ICpuSimulator> cpuSimulators = new ArrayList<>();
+        for (int i=0; i<no; i++) {
+            cpuSimulators.add(createCpuSimulator(simulatorMessagePart));
+        }
+        return cpuSimulators;
     }
 }

@@ -5,12 +5,13 @@ import common.enums.SimulationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import simulation.cpu.AbstractCpuSimulator;
 import simulation.cpu.ICpuSimulator;
 import simulation.ram.IRamSimulator;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
+import javax.annotation.PreDestroy;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -32,13 +33,15 @@ public class LoadSimulator implements ILoadSimulator {
 
     private SimulatorFactory simulatorFactory;
     private Integer duration;
-    private AbstractCpuSimulator cpuSimulator;
+    private Integer noCores;
+    private List<ICpuSimulator> cpuSimulators;
     private IRamSimulator ramSimulator;
 
 
     @PostConstruct
     public void init() {
         simulatorFactory = new SimulatorFactory();
+        noCores = Runtime.getRuntime().availableProcessors();
     }
 
     @Override
@@ -47,7 +50,7 @@ public class LoadSimulator implements ILoadSimulator {
 
         // setup CPU Simulator
         if (message.getParts().containsKey(SimulationType.CPU)) {
-            cpuSimulator = (AbstractCpuSimulator)simulatorFactory.createCpuSimulator(message.getParts().get(SimulationType.CPU));
+            cpuSimulators = simulatorFactory.createCpuSimulators(noCores, message.getParts().get(SimulationType.CPU));
         }
 
 
@@ -61,28 +64,33 @@ public class LoadSimulator implements ILoadSimulator {
     @Override
     public void runSimulation() {
         log.info("++ Simulation started ++");
+
         if (ramSimulator != null) {
             ramSimulator.allocateMemory();
         }
 
-        if (cpuSimulator != null) {
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            Future<String> future = executor.submit(cpuSimulator);
-            try {
-                log.info(String.format("Running CPU Simulation for %d seconds...", duration));
-                future.get(duration, TimeUnit.SECONDS);
+        if (cpuSimulators != null) {
+//            ExecutorService executor = Executors.newSingleThreadExecutor();
+            ExecutorService executor = Executors.newFixedThreadPool(noCores);
 
-            } catch (TimeoutException e) {
-                log.info("CPU Simulation ended.");
-                future.cancel(true);
+            try {
+                log.info(String.format("Running CPU Simulation on %d cores for %d seconds...", noCores, duration));
+
+                List<Future<String>> futures = executor.invokeAll(cpuSimulators, duration, TimeUnit.SECONDS);
 
             } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
                 e.printStackTrace();
             }
 
         }
+        log.info("CPU Simulation has ended.");
+        log.info("Cleaning up simulation...");
+        cleanUp();
         log.info("++ Simulation ended ++");
+    }
+
+    @PreDestroy
+    private void cleanUp() {
+//        cpuSimulators
     }
 }
