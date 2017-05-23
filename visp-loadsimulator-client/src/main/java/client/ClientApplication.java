@@ -110,6 +110,7 @@ public class ClientApplication {
 
         } catch (Exception e) {
             System.out.printf("Unexpected exception: %s %s\n", e.getClass().getSimpleName(), e.getMessage());
+            e.printStackTrace();
             System.exit(0);
         }
 

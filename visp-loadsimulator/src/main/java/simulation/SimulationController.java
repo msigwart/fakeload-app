@@ -54,11 +54,11 @@ public class SimulationController implements CommandLineRunner {
                     Thread.sleep(5000);
                 }
             }
-            
+
         } catch (InterruptedException | IOException | TimeoutException e) {
             log.error("Caught Exception: " + e.getMessage());
+            e.printStackTrace();
             System.exit(0);
-//            e.printStackTrace();
         }
     }
 
