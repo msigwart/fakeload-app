@@ -3,6 +3,7 @@ package simulation;
 import common.SimulatorMessage;
 import common.consumer.LoadSimulatorConsumer;
 import common.util.Constants;
+import common.util.MyCommandLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,13 @@ public class SimulationController implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        String host = Constants.DEFAULT_HOST;
-        String queue = Constants.DEFAULT_QUEUE_NAME;
 
         try {
+
+            // Parse command line arguments
+            MyCommandLineParser parser = new MyCommandLineParser(args);
+            String host = parser.parseHost();
+            String queue = parser.parseQueue();
 
             LoadSimulatorConsumer consumer = new LoadSimulatorConsumer();
             consumer.connect(host, queue);
@@ -50,8 +54,10 @@ public class SimulationController implements CommandLineRunner {
                     Thread.sleep(5000);
                 }
             }
+            
         } catch (InterruptedException | IOException | TimeoutException e) {
-            log.warn("Caught Exception: " + e.getMessage());
+            log.error("Caught Exception: " + e.getMessage());
+            System.exit(0);
 //            e.printStackTrace();
         }
     }
