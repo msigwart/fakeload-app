@@ -42,6 +42,12 @@
             <artifactId>javax.inject</artifactId>
             <version>1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.spotify/dockerfile-maven-plugin -->
+        <dependency>
+            <groupId>com.spotify</groupId>
+            <artifactId>dockerfile-maven-plugin</artifactId>
+            <version>1.2.2</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.slf4j/jcl-over-slf4j -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -76,6 +82,24 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.2.2</version>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <repository>msigwart/visp-loadsimulator</repository>
+                    <tag>${project.version}</tag>
+                </configuration>
             </plugin>
         </plugins>
     </build>
