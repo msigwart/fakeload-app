@@ -71,6 +71,8 @@ public class LoadSimulator implements ILoadSimulator {
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            } finally {
+                executor.shutdown();
             }
 
         }
