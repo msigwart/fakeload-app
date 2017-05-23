@@ -6,7 +6,7 @@ import common.enums.RamSimulationMethod;
 import common.enums.SimulationType;
 import common.producer.LoadSimulatorProducer;
 import common.util.Constants;
-import org.apache.commons.cli.*;
+import common.util.MyCommandLineParser;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -23,34 +23,12 @@ public class ClientApplication {
 
     public static void main(String[] args) {
 
-        String host = Constants.DEFAULT_HOST;
-        String queue = Constants.DEFAULT_QUEUE_NAME;
-
-        // Create parser
-        CommandLineParser parser = new DefaultParser();
-
-        // Create options
-        Options options = new Options();
-        options.addOption("h", "host", true, "host of rabbitmq server");
-        options.addOption("q", "queue", true, "queue name");
-
         try {
+
             // Parse command line arguments
-            CommandLine cmd = parser.parse(options, args);
-
-            // Parse host
-            if (cmd.hasOption("h")) {
-                host = cmd.getOptionValue("h");
-            } else if (cmd.hasOption("host")) {
-                host = (String)cmd.getParsedOptionValue("host");
-            } //TODO check if valid host
-
-            // Parse queue name
-            if (cmd.hasOption("q")) {
-                queue = cmd.getOptionValue("q");
-            } else if (cmd.hasOption("queue")) {
-                queue = (String)cmd.getParsedOptionValue("queue");
-            }
+            MyCommandLineParser parser = new MyCommandLineParser(args);
+            String host = parser.parseHost();
+            String queue = parser.parseQueue();
 
             // Create new connection
             LoadSimulatorProducer client = new LoadSimulatorProducer();
