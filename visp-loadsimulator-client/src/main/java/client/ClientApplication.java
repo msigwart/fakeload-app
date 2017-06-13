@@ -7,6 +7,8 @@ import common.enums.SimulationType;
 import common.producer.LoadSimulatorProducer;
 import common.util.Constants;
 import common.util.MyCommandLineParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -34,11 +36,13 @@ public class ClientApplication {
             LoadSimulatorProducer client = new LoadSimulatorProducer();
             client.connect(host, queue);
 
+            System.out.printf("+++ Connected to RabbitMQ at %s, queue: %s +++\n", host, queue);
+
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             while (true) {
 
                 try {
-                    System.out.printf("++ NEW SIMULATOR MESSAGE ++\n");
+                    System.out.printf("+ New Simulator Message +\n");
                     SimulatorMessage message = new SimulatorMessage();
                     boolean messageDone = false;
 
