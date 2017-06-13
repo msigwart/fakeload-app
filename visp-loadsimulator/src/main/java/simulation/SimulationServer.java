@@ -39,7 +39,7 @@ public class SimulationServer implements CommandLineRunner {
             LoadSimulatorConsumer consumer = new LoadSimulatorConsumer();
             consumer.connect(host, queue);
 
-            log.info("Connected to RabbitMQ at {}, queue: {}, simulation scope: {}");
+            log.info("Connected to RabbitMQ at {}, queue: {}, simulation scope: {}", host, queue, scope);
 
 
             log.info("Waiting for messages...");
