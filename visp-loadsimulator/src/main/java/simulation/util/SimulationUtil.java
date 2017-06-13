@@ -2,6 +2,7 @@ package simulation.util;
 
 import common.SimulatorMessage;
 import common.SimulatorMessagePart;
+import common.enums.SimulationScope;
 import common.enums.SimulationType;
 import simulation.ControlTask;
 import simulation.SimulationLoad;
@@ -59,8 +60,8 @@ public class SimulationUtil {
         return cpuSimulators;
     }
 
-    public static ControlTask createSimulationControl(SimulatorMessage message) {
-        ControlTask control = new ControlTask();
+    public static ControlTask createSimulationControl(SimulatorMessage message, SimulationScope scope) {
+        ControlTask control = new ControlTask(scope);
 
         message.getParts().forEach((type, part) -> {
             control.setLoadParameters(type, part.getWorkload(), part.getMethod());

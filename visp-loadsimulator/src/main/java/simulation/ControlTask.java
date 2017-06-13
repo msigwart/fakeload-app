@@ -1,7 +1,12 @@
 package simulation;
 
+import common.enums.SimulationScope;
 import common.enums.SimulationType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.management.ManagementFactory;
+import com.sun.management.OperatingSystemMXBean;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -18,18 +23,62 @@ import static common.enums.SimulationType.*;
  */
 public class ControlTask implements Callable<String> {
 
+    public static final long CONTROL_TASK_PERIOD_SLEEP = 2000;
+    public static final long CONTROL_TASK_INITIAL_SLEEP = 10000;
+
+    private static final Logger log = LoggerFactory.getLogger(ControlTask.class);
+    private static final OperatingSystemMXBean operatingSystem = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+    private static final double RELATIVE_MARGIN = 0.01;
+
     private SimulationLoad load;
-    private Map<SimulationType, LoadParameters> loadParameters;
+    private Map<SimulationType, LoadParameters> loadParameters;     //the desired system loads
+    private SimulationScope scope;
 
 
-    public ControlTask() {
+    public ControlTask(SimulationScope scope) {
         this.load = new SimulationLoad();
         this.loadParameters = new HashMap<>();
+        this.scope = scope;
     }
 
     @Override
     public String call() throws Exception {
-        return null;
+        log.info("Control Task started");
+
+        Thread.sleep(CONTROL_TASK_INITIAL_SLEEP);
+
+        while (true) {
+            Thread.sleep(CONTROL_TASK_PERIOD_SLEEP);
+
+            Integer desiredLoad = loadParameters.get(CPU).desiredWorkload;
+            Double actualLoad;
+
+            switch (scope) {
+                case PROCESS:
+                    actualLoad = operatingSystem.getProcessCpuLoad() * 100;
+                    break;
+                case SYSTEM:
+                default:
+                    actualLoad = operatingSystem.getSystemCpuLoad() * 100;
+                    break;
+            }
+
+            if (actualLoad <= 0.0) continue;
+            if (Math.abs(actualLoad - desiredLoad) > 10.0) continue;
+
+            log.info("Desired: {}, Actual: {}", desiredLoad, actualLoad);
+
+            Double margin = ((double)desiredLoad) * RELATIVE_MARGIN;
+            Double loadDifference = actualLoad - desiredLoad;
+
+            if (Math.abs(loadDifference) > margin) {
+                Integer adjustment = Math.toIntExact(Math.round(loadDifference / 2) * (-1));
+                log.info("Adjusting CPU load by {} percent", adjustment);
+                load.adjustCpuLoadBy(adjustment);
+            }
+
+        }
+
     }
 
 

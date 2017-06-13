@@ -1,6 +1,7 @@
 package simulation;
 
 import common.SimulatorMessage;
+import common.enums.SimulationScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -36,9 +37,9 @@ public class Simulation implements ISimulation {
     }
 
     @Override
-    public void setUp(SimulatorMessage message) {
+    public void setUp(SimulatorMessage message, SimulationScope scope) {
         duration = message.getDuration();
-        simulationControl = SimulationUtil.createSimulationControl(message);
+        simulationControl = SimulationUtil.createSimulationControl(message, scope);
         allTasks.add(simulationControl);
 
         // setup CPU Simulator

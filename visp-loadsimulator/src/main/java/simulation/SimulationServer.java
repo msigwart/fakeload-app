@@ -2,6 +2,7 @@ package simulation;
 
 import common.SimulatorMessage;
 import common.consumer.LoadSimulatorConsumer;
+import common.enums.SimulationScope;
 import common.util.MyCommandLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ public class SimulationServer implements CommandLineRunner {
     private static Logger log = LoggerFactory.getLogger(SimulationServer.class);
 
     @Autowired
-    private Simulation loadSimulator;
+    private Simulation simulation;
 
 
     @Override
@@ -33,9 +34,13 @@ public class SimulationServer implements CommandLineRunner {
             MyCommandLineParser parser = new MyCommandLineParser(args);
             String host = parser.parseHost();
             String queue = parser.parseQueue();
+            SimulationScope scope = parser.parseScope();
 
             LoadSimulatorConsumer consumer = new LoadSimulatorConsumer();
             consumer.connect(host, queue);
+
+            log.info("Connected to RabbitMQ at {}, queue: {}, simulation scope: {}");
+
 
             log.info("Waiting for messages...");
             SimulatorMessage message;
@@ -44,8 +49,8 @@ public class SimulationServer implements CommandLineRunner {
                 if (message != null) {
                     log.info(String.format("Retrieved simulator message %s", message));
 
-                    loadSimulator.setUp(message);
-                    loadSimulator.run();
+                    simulation.setUp(message, scope);
+                    simulation.run();
 
                     log.info("Waiting for messages...");
 

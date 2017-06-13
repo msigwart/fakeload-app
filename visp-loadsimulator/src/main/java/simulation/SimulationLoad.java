@@ -27,6 +27,11 @@ public class SimulationLoad {
         return workloads.get(RAM);
     }
 
+    public void adjustCpuLoadBy(Integer addedLoad) {
+        Integer oldWorkload = getCpuLoad();
+        setCpuLoad(Math.min(oldWorkload + addedLoad, 100));
+    }
+
     public Map<SimulationType, Integer> getWorkloads() {
         return workloads;
     }
