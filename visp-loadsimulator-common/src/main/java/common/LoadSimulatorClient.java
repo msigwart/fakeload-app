@@ -3,6 +3,8 @@ package common;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -37,6 +39,5 @@ public abstract class LoadSimulatorClient {
 
         // declare queue
         channel.queueDeclare(queue, false, false, false, null);
-
     }
 }

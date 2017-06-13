@@ -1,9 +1,11 @@
 package common.util;
 
+import common.enums.SimulationScope;
 import org.apache.commons.cli.*;
 
 import static common.util.Constants.DEFAULT_HOST;
 import static common.util.Constants.DEFAULT_QUEUE_NAME;
+import static common.util.Constants.DEFAULT_SCOPE;
 
 /**
  * Created by martensigwart on 23.05.17.
@@ -23,9 +25,17 @@ public class MyCommandLineParser {
         options = new Options();
         options.addOption("h", "host", true, "host of rabbitmq server");
         options.addOption("q", "queue", true, "queue name");
+        options.addOption("system", false, "simulation scope system");
+        options.addOption("process", false, "simulation scope process");
 
         // Save arguments
         this.args = args;
+    }
+
+    private void parse() throws ParseException {
+        if (cmd == null) {
+            cmd = parser.parse(options, args);
+        }
     }
 
 
@@ -63,10 +73,19 @@ public class MyCommandLineParser {
     }
 
 
-    private void parse() throws ParseException {
-        if (cmd == null) {
-            cmd = parser.parse(options, args);
-        }
-    }
+    public SimulationScope parseScope() throws ParseException {
+        parse();
 
+        // Parse queue name
+        SimulationScope scope = SimulationScope.SYSTEM;
+        if (cmd.hasOption("process")) {
+            scope = SimulationScope.PROCESS;
+        }
+
+        if (cmd.hasOption("system")) {
+            scope = SimulationScope.SYSTEM;
+        }
+
+        return scope;
+    }
 }

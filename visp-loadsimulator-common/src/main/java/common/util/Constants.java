@@ -9,6 +9,7 @@ public class Constants {
 
     public final static String DEFAULT_QUEUE_NAME = "simulator-queue";
     public final static String DEFAULT_HOST = "localhost";
+    public final static String DEFAULT_SCOPE = "system";
 
     public static final int DURATION_MAX = 1800;
 
