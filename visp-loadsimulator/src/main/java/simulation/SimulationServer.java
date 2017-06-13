@@ -2,7 +2,6 @@ package simulation;
 
 import common.SimulatorMessage;
 import common.consumer.LoadSimulatorConsumer;
-import common.util.Constants;
 import common.util.MyCommandLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +16,12 @@ import java.util.concurrent.TimeoutException;
  * Created by martensigwart on 16.05.17.
  */
 @Component
-public class SimulationController implements CommandLineRunner {
+public class SimulationServer implements CommandLineRunner {
 
-    private static Logger log = LoggerFactory.getLogger(SimulationController.class);
+    private static Logger log = LoggerFactory.getLogger(SimulationServer.class);
 
     @Autowired
-    private LoadSimulator loadSimulator;
+    private Simulation loadSimulator;
 
 
     @Override
@@ -45,8 +44,8 @@ public class SimulationController implements CommandLineRunner {
                 if (message != null) {
                     log.info(String.format("Retrieved simulator message %s", message));
 
-                    loadSimulator.setUpSimulation(message);
-                    loadSimulator.runSimulation();
+                    loadSimulator.setUp(message);
+                    loadSimulator.run();
 
                     log.info("Waiting for messages...");
 

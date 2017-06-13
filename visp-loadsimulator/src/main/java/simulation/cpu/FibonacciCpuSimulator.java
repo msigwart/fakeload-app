@@ -3,6 +3,7 @@ package simulation.cpu;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import simulation.SimulationLoad;
 
 /**
  * Created by martensigwart on 17.05.17.
@@ -15,8 +16,8 @@ public class FibonacciCpuSimulator extends AbstractCpuSimulator {
     private long fib1 = 1;
     private long fib2;
 
-    public FibonacciCpuSimulator(Integer workload) {
-        super(workload);
+    public FibonacciCpuSimulator(SimulationLoad load) {
+        super(load);
     }
 
     @Override
