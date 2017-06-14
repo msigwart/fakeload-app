@@ -66,14 +66,14 @@ public class ControlTask implements Callable<String> {
             if (actualLoad <= 0.0) continue;
             if (Math.abs(actualLoad - desiredLoad) > 10.0) continue;
 
-            log.info("Desired: {}, Actual: {}", desiredLoad, actualLoad);
+            log.debug("Desired: {}, Actual: {}", desiredLoad, actualLoad);
 
             Double margin = ((double)desiredLoad) * RELATIVE_MARGIN;
             Double loadDifference = actualLoad - desiredLoad;
 
             if (Math.abs(loadDifference) > margin) {
                 Integer adjustment = Math.toIntExact(Math.round(loadDifference / 2) * (-1));
-                log.info("Adjusting CPU load by {} percent", adjustment);
+                log.debug("Adjusting CPU load by {} percent", adjustment);
                 load.adjustCpuLoadBy(adjustment);
             }
 

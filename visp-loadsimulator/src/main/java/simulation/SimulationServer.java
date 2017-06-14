@@ -35,11 +35,13 @@ public class SimulationServer implements CommandLineRunner {
             String host = parser.parseHost();
             String queue = parser.parseQueue();
             SimulationScope scope = parser.parseScope();
+            Boolean controlDisabled = parser.parseControlDisabled();
 
             LoadSimulatorConsumer consumer = new LoadSimulatorConsumer();
             consumer.connect(host, queue);
 
-            log.info("Connected to RabbitMQ at {}, queue: {}, simulation scope: {}", host, queue, scope);
+            log.info("Connected to RabbitMQ at {}, queue: {}, simulation scope: {}{}", host, queue, scope,
+                    controlDisabled ? ", control thread disabled" : "");
 
 
             log.info("Waiting for messages...");
@@ -49,7 +51,7 @@ public class SimulationServer implements CommandLineRunner {
                 if (message != null) {
                     log.info(String.format("Retrieved simulator message %s", message));
 
-                    simulation.setUp(message, scope);
+                    simulation.setUp(message, scope, controlDisabled);
                     simulation.run();
 
                     log.info("Waiting for messages...");

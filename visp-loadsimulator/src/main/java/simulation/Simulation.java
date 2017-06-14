@@ -37,10 +37,14 @@ public class Simulation implements ISimulation {
     }
 
     @Override
-    public void setUp(SimulatorMessage message, SimulationScope scope) {
+    public void setUp(SimulatorMessage message, SimulationScope scope, Boolean controlDisabled) {
         duration = message.getDuration();
         simulationControl = SimulationUtil.createSimulationControl(message, scope);
-        allTasks.add(simulationControl);
+
+        // add control task if not disabled
+        if (!controlDisabled) {
+            allTasks.add(simulationControl);
+        }
 
         // setup CPU Simulator
         if (simulationControl.containsCpu()) {

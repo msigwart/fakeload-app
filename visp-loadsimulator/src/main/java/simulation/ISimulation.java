@@ -8,7 +8,7 @@ import common.enums.SimulationScope;
  */
 public interface ISimulation {
 
-    void setUp(SimulatorMessage message, SimulationScope scope);
+    void setUp(SimulatorMessage message, SimulationScope scope, Boolean controlDisabled);
 
     void run();
 }
