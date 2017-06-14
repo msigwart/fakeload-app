@@ -27,6 +27,7 @@ public class MyCommandLineParser {
         options.addOption("q", "queue", true, "queue name");
         options.addOption("system", false, "simulation scope system");
         options.addOption("process", false, "simulation scope process");
+        options.addOption("d", "disable", false, "disables the control thread of the simulation");
 
         // Save arguments
         this.args = args;
@@ -76,7 +77,7 @@ public class MyCommandLineParser {
     public SimulationScope parseScope() throws ParseException {
         parse();
 
-        // Parse queue name
+        // Parse scope
         SimulationScope scope = SimulationScope.SYSTEM;
         if (cmd.hasOption("process")) {
             scope = SimulationScope.PROCESS;
@@ -87,5 +88,19 @@ public class MyCommandLineParser {
         }
 
         return scope;
+    }
+
+    public Boolean parseControlDisabled() throws ParseException {
+        parse();
+
+        // Parse control disabled option
+        Boolean controlDisabled = false;
+        if (cmd.hasOption("disable")) {
+            controlDisabled = true;
+        } else if (cmd.hasOption("d")) {
+            controlDisabled = true;
+        }
+
+        return controlDisabled;
     }
 }
