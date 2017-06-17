@@ -24,10 +24,10 @@ public abstract class AbstractCpuSimulator implements ICpuSimulator {
 
                     switch (load.getAdjustmentType()) {
                         case INCREASE:
-                            this.workload++;
+                            if (this.workload < 100) this.workload++;
                             break;
                         case DECREASE:
-                            this.workload--;
+                            if (this.workload > 0) this.workload--;
                             break;
                     }
                 }
