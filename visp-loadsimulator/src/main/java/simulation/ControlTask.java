@@ -114,20 +114,6 @@ public class ControlTask implements Callable<String> {
 
 
 
-    public Integer getCpuMethod() {
-        if (containsCpu()) {
-            return loadParameters.get(CPU).getMethod();
-        }
-        return null;
-    }
-
-    public Integer getRamMethod() {
-        if (containsRam()) {
-            return loadParameters.get(RAM).getMethod();
-        }
-        return null;
-    }
-
 
     public void setInitialLoad(SimulationType type, Integer initialLoad, Integer method) {
         this.loadParameters.put(type, new LoadControlObject(type, initialLoad, method));

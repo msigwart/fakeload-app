@@ -13,7 +13,7 @@ public class RamSimulator implements IRamSimulator {
 
     public RamSimulator(LoadControlObject load) {
         this.load = load;
-        this.workload = load.getRamLoad();
+        this.workload = load.getInitialWorkload();
     }
 
     @Override
