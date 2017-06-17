@@ -2,6 +2,7 @@ package simulation;
 
 import common.SimulatorMessage;
 import common.enums.SimulationScope;
+import common.enums.SimulationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -39,7 +40,7 @@ public class Simulation implements ISimulation {
     @Override
     public void setUp(SimulatorMessage message, SimulationScope scope, Boolean controlDisabled) {
         duration = message.getDuration();
-        simulationControl = SimulationUtil.createSimulationControl(message, scope);
+        simulationControl = SimulationUtil.createSimulationControl(message, scope, noCores);
 
         // add control task if not disabled
         if (!controlDisabled) {
@@ -49,14 +50,14 @@ public class Simulation implements ISimulation {
         // setup CPU Simulator
         if (simulationControl.containsCpu()) {
             List<ICpuSimulator> cpuSimulators;
-            cpuSimulators = SimulationUtil.createCpuSimulators(noCores, simulationControl.getCpuMethod(), simulationControl.getLoad());
+            cpuSimulators = SimulationUtil.createCpuSimulators(noCores, simulationControl.getLoad(SimulationType.CPU));
             allTasks.addAll(cpuSimulators);
         }
 
         // setup RAM Simulator
         if (simulationControl.containsRam()) {
             IRamSimulator ramSimulator;
-            ramSimulator = SimulationUtil.createRamSimulator(simulationControl.getRamMethod(), simulationControl.getLoad());
+            ramSimulator = SimulationUtil.createRamSimulator(simulationControl.getLoad(SimulationType.RAM));
             allTasks.add(ramSimulator);
         }
 

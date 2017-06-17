@@ -1,17 +1,17 @@
 package simulation.ram;
 
-import simulation.SimulationLoad;
+import simulation.LoadControlObject;
 
 /**
  * Created by martensigwart on 17.05.17.
  */
 public class RamSimulator implements IRamSimulator {
 
-    private SimulationLoad load;
+    private LoadControlObject load;
     private Integer workload;
 
 
-    public RamSimulator(SimulationLoad load) {
+    public RamSimulator(LoadControlObject load) {
         this.load = load;
         this.workload = load.getRamLoad();
     }

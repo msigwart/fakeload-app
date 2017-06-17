@@ -53,7 +53,9 @@ public class SimulationServer implements CommandLineRunner {
 
                     simulation.setUp(message, scope, controlDisabled);
                     simulation.run();
-
+                    
+                    log.info("Cooling down...");
+                    Thread.sleep(10000);
                     log.info("Waiting for messages...");
 
                 } else {

@@ -1,21 +1,18 @@
 package simulation.cpu;
 
-import simulation.SimulationLoad;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
+import simulation.LoadControlObject;
 
 /**
  * Created by martensigwart on 19.05.17.
  */
 public abstract class AbstractCpuSimulator implements ICpuSimulator {
 
-    private SimulationLoad load;
+    private LoadControlObject load;
     long workload;
 
-    public AbstractCpuSimulator(SimulationLoad load) {
+    public AbstractCpuSimulator(LoadControlObject load) {
         this.load = load;
-        this.workload = load.getCpuLoad();
+        this.workload = load.getInitialWorkload();
     }
 
     @Override
@@ -23,8 +20,16 @@ public abstract class AbstractCpuSimulator implements ICpuSimulator {
 
             while (true) {
                 // adopt changes to simulation load
-                if (load.getCpuLoad() != workload) {
-                    workload = load.getCpuLoad();
+                if (load.getAndDecrementPermits() > 0) {
+
+                    switch (load.getAdjustmentType()) {
+                        case INCREASE:
+                            this.workload++;
+                            break;
+                        case DECREASE:
+                            this.workload--;
+                            break;
+                    }
                 }
 
                 long time = System.currentTimeMillis() + workload;

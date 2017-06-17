@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import static common.enums.SimulationType.*;
+import static simulation.LoadControlObject.AdjustmentType.DECREASE;
+import static simulation.LoadControlObject.AdjustmentType.INCREASE;
 
 /**
  * This class acts as the controlling entity of the load simulation. Whenever a load simulation is run, this class is run
@@ -30,15 +32,15 @@ public class ControlTask implements Callable<String> {
     private static final OperatingSystemMXBean operatingSystem = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
     private static final double RELATIVE_MARGIN = 0.01;
 
-    private SimulationLoad load;
-    private Map<SimulationType, LoadParameters> loadParameters;     //the desired system loads
+    private Map<SimulationType, LoadControlObject> loadParameters;     //the desired system loads
     private SimulationScope scope;
+    private Integer noCores;
 
 
-    public ControlTask(SimulationScope scope) {
-        this.load = new SimulationLoad();
+    public ControlTask(SimulationScope scope, Integer noCores) {
         this.loadParameters = new HashMap<>();
         this.scope = scope;
+        this.noCores = noCores;
     }
 
     @Override
@@ -50,7 +52,7 @@ public class ControlTask implements Callable<String> {
         while (true) {
             Thread.sleep(CONTROL_TASK_PERIOD_SLEEP);
 
-            Integer desiredLoad = loadParameters.get(CPU).desiredWorkload;
+            Integer desiredLoad = loadParameters.get(CPU).getInitialWorkload();
             Double actualLoad;
 
             switch (scope) {
@@ -63,19 +65,31 @@ public class ControlTask implements Callable<String> {
                     break;
             }
 
+            log.debug("Desired: {}, Actual: {}", desiredLoad, actualLoad);
+
+            // Define differences to ignore
             if (actualLoad <= 0.0) continue;
             if (Math.abs(actualLoad - desiredLoad) > 10.0) continue;
 
-            log.debug("Desired: {}, Actual: {}", desiredLoad, actualLoad);
-
-            Double margin = ((double)desiredLoad) * RELATIVE_MARGIN;
+            // Calculate adjustment of CPU load
+            Double stepSize = 1.0 / noCores;
             Double loadDifference = actualLoad - desiredLoad;
 
-            if (Math.abs(loadDifference) > margin) {
-                Integer adjustment = Math.toIntExact(Math.round(loadDifference / 2) * (-1));
-                log.debug("Adjusting CPU load by {} percent", adjustment);
-                load.adjustCpuLoadBy(adjustment);
-            }
+            Integer noOfSteps = Math.abs(new Double(loadDifference / stepSize).intValue());
+
+            LoadControlObject.AdjustmentType type = (loadDifference > 0 ? DECREASE : INCREASE);
+            this.loadParameters.get(CPU).setAdjustment(noOfSteps, type);
+
+
+//            Double margin = ((double)desiredLoad) * RELATIVE_MARGIN;
+//            Double loadDifference = actualLoad - desiredLoad;
+//
+//
+//            if (Math.abs(loadDifference) > margin) {
+//                Integer adjustment = Math.toIntExact(Math.round(loadDifference / 2) * (-1));
+//                log.debug("Adjusting CPU load by {} percent", adjustment);
+//                load.adjustCpuLoadBy(adjustment);
+//            }
 
         }
 
@@ -85,8 +99,8 @@ public class ControlTask implements Callable<String> {
 
 
 
-    public SimulationLoad getLoad() {
-        return load;
+    public LoadControlObject getLoad(SimulationType type) {
+        return this.loadParameters.get(type);
     }
 
 
@@ -102,33 +116,23 @@ public class ControlTask implements Callable<String> {
 
     public Integer getCpuMethod() {
         if (containsCpu()) {
-            return loadParameters.get(CPU).method;
+            return loadParameters.get(CPU).getMethod();
         }
         return null;
     }
 
     public Integer getRamMethod() {
         if (containsRam()) {
-            return loadParameters.get(RAM).method;
+            return loadParameters.get(RAM).getMethod();
         }
         return null;
     }
 
 
-    public void setLoadParameters(SimulationType type, Integer workload, Integer method) {
-        loadParameters.put(type, new LoadParameters(workload, method));
-        load.getWorkloads().put(type, workload);
+    public void setInitialLoad(SimulationType type, Integer initialLoad, Integer method) {
+        this.loadParameters.put(type, new LoadControlObject(type, initialLoad, method));
     }
 
 
-    private class LoadParameters {
-        Integer desiredWorkload;
-        Integer method;
-
-        LoadParameters(Integer workload, Integer method) {
-            this.desiredWorkload = workload;
-            this.method = method;
-        }
-    }
 }
 
