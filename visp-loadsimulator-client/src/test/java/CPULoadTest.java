@@ -1,8 +1,6 @@
 import common.SimulatorMessage;
 import common.SimulatorMessagePart;
 import common.enums.SimulationType;
-import common.producer.LoadSimulatorProducer;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -30,45 +28,72 @@ public class CPULoadTest extends AbstractTestBase {
     }
 
     @Test
-    public void superShortCpuTest() {
+    public void single1minSimulations() {
 
         Integer durations[] = {1}; // 10min
-        sendMessages(durations);
+
+        sendMessages(durations, step10loads, 1);
 
     }
 
 
-//    @Test
-    public void shortCpuTest() {
+    @Test
+    public void single2minSimulations() {
 
-        Integer durations[] = {1, 2, 3}; // 60min = 1h
-        sendMessages(durations);
+        Integer durations[] = {2};
+        sendMessages(durations, step10loads, 1);
 
     }
 
 
-//    @Test
+    @Test
     public void longCpuTest() {
 
         Integer durations[] = {1, 2, 3, 5, 10, 20}; // 410min ~ 7h
-        sendMessages(durations);
+        sendMessages(durations, step10loads, 1);
 
     }
 
 
-    private void sendMessages(Integer[] durations) {
+    @Test
+    public void repeated10minSimulations() {
+        Integer durations[] = {10};
+        sendMessages(durations, step10loads, 5);
+    }
+
+
+
+    @Test
+    public void repeated20minSimulations() {
+        Integer durations[] = {10};
+        sendMessages(durations, step10loads, 5);
+    }
+
+
+    @Test
+    public void customSimulations() {
+        Integer durations[] = {5, 10, 15};
+        Integer loads[] = {20, 40, 60, 80, 100};
+        Integer repetititons = 3;
+
+        sendMessages(durations, loads, repetititons);
+    }
+
+
+    private void sendMessages(Integer[] durations, Integer[] loads, Integer noOfRepetitions) {
         for (Integer time: durations) {
-            for (SimulatorMessagePart part: allParts) {
+            for (Integer load: loads) {
 
-                Map<SimulationType, SimulatorMessagePart> map = new HashMap<>();
-                map.put(CPU, part);
-                SimulatorMessage m = new SimulatorMessage(time*60, map);
-                try {
-                    producer.sendLoadSimulationMessage(m);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                for (int i=0; i<noOfRepetitions; i++) {
+                    Map<SimulationType, SimulatorMessagePart> map = new HashMap<>();
+                    map.put(CPU, new SimulatorMessagePart(CPU, load));
+                    SimulatorMessage m = new SimulatorMessage(time * 60, map);
+                    try {
+                        producer.sendLoadSimulationMessage(m);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-
             }
         }
     }

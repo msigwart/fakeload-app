@@ -1,5 +1,3 @@
-import common.SimulatorMessagePart;
-import common.enums.SimulationType;
 import common.producer.LoadSimulatorProducer;
 import common.util.Constants;
 
@@ -14,18 +12,18 @@ public abstract class AbstractTestBase {
     public static final String HOST="128.130.172.178";
     public static final String QUEUE= Constants.DEFAULT_QUEUE_NAME;
 
-    SimulatorMessagePart cpu10 = new SimulatorMessagePart(SimulationType.CPU, 10);
-    SimulatorMessagePart cpu20 = new SimulatorMessagePart(SimulationType.CPU, 20);
-    SimulatorMessagePart cpu30 = new SimulatorMessagePart(SimulationType.CPU, 30);
-    SimulatorMessagePart cpu40 = new SimulatorMessagePart(SimulationType.CPU, 40);
-    SimulatorMessagePart cpu50 = new SimulatorMessagePart(SimulationType.CPU, 50);
-    SimulatorMessagePart cpu60 = new SimulatorMessagePart(SimulationType.CPU, 60);
-    SimulatorMessagePart cpu70 = new SimulatorMessagePart(SimulationType.CPU, 70);
-    SimulatorMessagePart cpu80 = new SimulatorMessagePart(SimulationType.CPU, 80);
-    SimulatorMessagePart cpu90 = new SimulatorMessagePart(SimulationType.CPU, 90);
-    SimulatorMessagePart cpu100 = new SimulatorMessagePart(SimulationType.CPU, 100);
+    Integer load10 = 10;
+    Integer load20 = 20;
+    Integer load30 = 30;
+    Integer load40 = 40;
+    Integer load50 = 50;
+    Integer load60 = 60;
+    Integer load70 = 70;
+    Integer load80 = 80;
+    Integer load90 = 90;
+    Integer load100 = 100;
 
-    SimulatorMessagePart allParts[] = {cpu10, cpu20, cpu30, cpu40, cpu50, cpu60, cpu70, cpu80, cpu90, cpu100};
+    Integer step10loads[] = {load10, load20, load30, load40, load50, load60, load70, load80, load90, load100};
 
 
 
