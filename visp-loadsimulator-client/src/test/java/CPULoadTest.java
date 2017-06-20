@@ -72,9 +72,9 @@ public class CPULoadTest extends AbstractTestBase {
 
     @Test
     public void customSimulations() {
-        Integer durations[] = {5, 10, 15};
+        Integer durations[] = {5};
         Integer loads[] = {20, 40, 60, 80, 100};
-        Integer repetititons = 3;
+        Integer repetititons = 1;
 
         sendMessages(durations, loads, repetititons);
     }
