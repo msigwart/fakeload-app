@@ -52,51 +52,28 @@ public class ControlTask implements Callable<String> {
         while (true) {
             Thread.sleep(CONTROL_TASK_PERIOD_SLEEP);
 
-            Integer desiredLoad = loadParameters.get(CPU).getInitialWorkload();
-            Double actualLoad;
+            // Control CPU Load
+            controlCpuLoad();
 
-            switch (scope) {
-                case PROCESS:
-                    actualLoad = operatingSystem.getProcessCpuLoad() * 100;
-                    break;
-                case SYSTEM:
-                default:
-                    actualLoad = operatingSystem.getSystemCpuLoad() * 100;
-                    break;
-            }
-
-            log.debug("Desired: {}, Actual: {}", desiredLoad, actualLoad);
-
-            // Define differences to ignore
-            if (actualLoad <= 0.0) continue;
-            if (Math.abs(actualLoad - desiredLoad) > 10.0) continue;
-
-            // Calculate adjustment of CPU load
-            Double stepSize = 1.0 / noCores;
-            Double loadDifference = actualLoad - desiredLoad;
-
-            Integer noOfSteps = Math.abs(new Double(loadDifference / stepSize).intValue());
-
-            LoadControlObject.AdjustmentType type = (loadDifference > 0 ? DECREASE : INCREASE);
-            this.loadParameters.get(CPU).setAdjustment(noOfSteps, type);
-
-
-//            Double margin = ((double)desiredLoad) * RELATIVE_MARGIN;
-//            Double loadDifference = actualLoad - desiredLoad;
-//
-//
-//            if (Math.abs(loadDifference) > margin) {
-//                Integer adjustment = Math.toIntExact(Math.round(loadDifference / 2) * (-1));
-//                log.debug("Adjusting CPU load by {} percent", adjustment);
-//                load.adjustCpuLoadBy(adjustment);
-//            }
+            // Control RAM Load
+            controlRamLoad();
 
         }
 
     }
 
+    private void controlRamLoad() {
+        Integer desiredLoad = loadParameters.get(RAM).getInitialWorkload();
+        Double actualLoad;
 
+        switch (scope) {
 
+            case SYSTEM:
+                break;
+            case PROCESS:
+                break;
+        }
+    }
 
 
     public LoadControlObject getLoad(SimulationType type) {
@@ -113,10 +90,39 @@ public class ControlTask implements Callable<String> {
     }
 
 
-
-
     public void setInitialLoad(SimulationType type, Integer initialLoad, Integer method) {
         this.loadParameters.put(type, new LoadControlObject(type, initialLoad, method));
+    }
+
+
+    private void controlCpuLoad() {
+        Integer desiredLoad = loadParameters.get(CPU).getInitialWorkload();
+        Double actualLoad;
+
+        switch (scope) {
+            case PROCESS:
+                actualLoad = operatingSystem.getProcessCpuLoad() * 100;
+                break;
+            case SYSTEM:
+            default:
+                actualLoad = operatingSystem.getSystemCpuLoad() * 100;
+                break;
+        }
+
+        log.debug("Desired: {}, Actual: {}", desiredLoad, actualLoad);
+
+        // Define differences to ignore
+        if (actualLoad <= 0.0) return;
+        if (Math.abs(actualLoad - desiredLoad) > 10.0) return;
+
+        // Calculate adjustment of CPU load
+        Double stepSize = 1.0 / noCores;
+        Double loadDifference = actualLoad - desiredLoad;
+
+        Integer noOfSteps = Math.abs(new Double(loadDifference / stepSize).intValue());
+
+        LoadControlObject.AdjustmentType type = (loadDifference > 0 ? DECREASE : INCREASE);
+        this.loadParameters.get(CPU).setAdjustment(noOfSteps, type);
     }
 
 
