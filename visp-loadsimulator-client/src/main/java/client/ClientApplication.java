@@ -4,11 +4,9 @@ import common.*;
 import common.enums.CpuSimulationMethod;
 import common.enums.RamSimulationMethod;
 import common.enums.SimulationType;
-import common.producer.LoadSimulatorProducer;
+import client.producer.LoadSimulatorProducer;
 import common.util.Constants;
 import common.util.MyCommandLineParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

@@ -1,4 +1,4 @@
-package common.producer;
+package client.producer;
 
 import common.SimulatorMessage;
 

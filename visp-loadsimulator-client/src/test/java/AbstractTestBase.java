@@ -1,4 +1,4 @@
-import common.producer.LoadSimulatorProducer;
+import client.producer.LoadSimulatorProducer;
 import common.util.Constants;
 
 import java.io.IOException;

@@ -24,21 +24,28 @@ public class Simulation implements ISimulation {
 
 
     private static final Logger log = LoggerFactory.getLogger(Simulation.class);
+    private static final SimulationScope DEFAULT_SCOPE = SimulationScope.PROCESS;
 
+    private SimulationScope scope;
+    private Boolean controlDisabled;
     private Integer duration;
     private Integer noCores;
     private ControlTask simulationControl;
     private List<Callable<String>> allTasks;
 
 
+
     @PostConstruct
     public void init() {
         noCores = Runtime.getRuntime().availableProcessors();
         allTasks = new ArrayList<>();
+        controlDisabled = false;
+        scope = DEFAULT_SCOPE;
     }
 
+
     @Override
-    public void setUp(SimulatorMessage message, SimulationScope scope, Boolean controlDisabled) {
+    public void setUp(SimulatorMessage message) {
         duration = message.getDuration();
         simulationControl = SimulationUtil.createSimulationControl(message, scope, noCores);
 
@@ -63,6 +70,9 @@ public class Simulation implements ISimulation {
 
     }
 
+
+
+
     @Override
     public void run() {
         log.info(String.format("+++ Running Simulation on %d cores for %d seconds +++", noCores, duration));
@@ -83,8 +93,18 @@ public class Simulation implements ISimulation {
         log.info("++ Simulation ended ++");
     }
 
+
+
     @PreDestroy
-    private void cleanUp() {
+    public void cleanUp() {
         allTasks.clear();
+    }
+
+    public void setControlDisabled(Boolean controlDisabled) {
+        this.controlDisabled = controlDisabled;
+    }
+
+    public void setScope(SimulationScope scope) {
+        this.scope = scope;
     }
 }

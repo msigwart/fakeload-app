@@ -1,4 +1,4 @@
-package common;
+package common.util;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -12,14 +12,14 @@ import java.util.concurrent.TimeoutException;
 /**
  * Created by martensigwart on 16.05.17.
  */
-public abstract class LoadSimulatorClient {
+public class RabbitMQClient {
 
     private final ConnectionFactory factory;
     private Connection connection;
     protected Channel channel;
     protected String queue;
 
-    public LoadSimulatorClient() {
+    public RabbitMQClient() {
         factory = new ConnectionFactory();
 
     }

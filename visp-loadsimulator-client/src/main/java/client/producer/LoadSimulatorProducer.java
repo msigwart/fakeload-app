@@ -1,6 +1,6 @@
-package common.producer;
+package client.producer;
 
-import common.LoadSimulatorClient;
+import common.util.RabbitMQClient;
 import common.SimulatorMessage;
 
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * Created by martensigwart on 03.05.17.
  */
-public class LoadSimulatorProducer extends LoadSimulatorClient implements ILoadSimulatorProducer {
+public class LoadSimulatorProducer extends RabbitMQClient implements ILoadSimulatorProducer {
 
     public LoadSimulatorProducer() {
         super();
