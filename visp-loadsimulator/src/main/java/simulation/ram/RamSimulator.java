@@ -28,8 +28,12 @@ public class RamSimulator implements IRamSimulator {
 
         long freeMemory = Runtime.getRuntime().freeMemory();
         long totalMemory = Runtime.getRuntime().totalMemory();
+        long maxMemory = Runtime.getRuntime().maxMemory();
 
-        log.info("Total Memory: {}, Available Memory: {}", totalMemory, freeMemory);
+        log.info("Max Memory: {} Total Memory: {}, Free Memory: {}",
+                maxMemory/(1000*1000),
+                totalMemory/(1000*1000),
+                freeMemory/(1000*1000));
 
         while (true) {
 
