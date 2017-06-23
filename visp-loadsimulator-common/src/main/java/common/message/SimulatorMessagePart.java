@@ -1,4 +1,4 @@
-package common;
+package common.message;
 
 import common.enums.SimulationType;
 import common.util.Constants;
@@ -10,20 +10,20 @@ import java.io.Serializable;
  */
 public class SimulatorMessagePart implements Serializable {
 
-    private static final long serialVersionUID = 8779625952217937753L;
+    private static final long serialVersionUID = 8779625952217937754L;
 
 
     private SimulationType type;    // what type of simulation to perform -> RAM, CPU, etc.
-    private Integer workload;       // workload in percent
+    private IWorkload workload;     // workload object
     private Integer method;         // what simulation method to use
 
-    public SimulatorMessagePart(SimulationType type, Integer workload, Integer method) {
+    public SimulatorMessagePart(SimulationType type, IWorkload workload, Integer method) {
         this.type = type;
         this.workload = workload;
         this.method = method;
     }
 
-    public SimulatorMessagePart(SimulationType type, Integer workload) {
+    public SimulatorMessagePart(SimulationType type, IWorkload workload) {
         this(type, workload, Constants.DEFAULT_METHOD);
     }
 
@@ -35,11 +35,11 @@ public class SimulatorMessagePart implements Serializable {
         this.type = type;
     }
 
-    public Integer getWorkload() {
+    public IWorkload getWorkload() {
         return workload;
     }
 
-    public void setWorkload(Integer workload) {
+    public void setWorkload(IWorkload workload) {
         this.workload = workload;
     }
 
