@@ -1,6 +1,7 @@
 package simulation;
 
 import common.enums.SimulationType;
+import common.message.IWorkload;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -12,14 +13,14 @@ public class LoadControlObject {
     private final SimulationType type;
 
     // Adjustment Variables
-    private final Integer initialWorkload;                                   // The inital workload --> cannot be modified
+    private final IWorkload initialWorkload;                                 // The inital workload --> cannot be modified
     private final Integer method;                                            // The simulation method
     private AtomicInteger noPermits = new AtomicInteger(0);                  // Integer indicating number of adjustment steps
     private volatile AdjustmentType adjustmentType;                          // INCREASE or DECREASE
 
 
 
-    public LoadControlObject(SimulationType type, Integer initialWorkload, Integer method) {
+    public LoadControlObject(SimulationType type, IWorkload initialWorkload, Integer method) {
 
         this.type = type;
         this.initialWorkload = initialWorkload;
@@ -37,7 +38,7 @@ public class LoadControlObject {
     }
 
 
-    public Integer getInitialWorkload() {
+    public IWorkload getInitialWorkload() {
         return initialWorkload;
     }
 

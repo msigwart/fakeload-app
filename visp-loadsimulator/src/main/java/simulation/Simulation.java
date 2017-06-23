@@ -1,6 +1,6 @@
 package simulation;
 
-import common.SimulatorMessage;
+import common.message.SimulatorMessage;
 import common.enums.SimulationScope;
 import common.enums.SimulationType;
 import org.slf4j.Logger;

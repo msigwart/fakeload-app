@@ -1,9 +1,7 @@
 package simulation.util;
 
-import common.SimulatorMessage;
-import common.SimulatorMessagePart;
+import common.message.SimulatorMessage;
 import common.enums.SimulationScope;
-import common.enums.SimulationType;
 import simulation.ControlTask;
 import simulation.LoadControlObject;
 import simulation.cpu.FibonacciCpuSimulator;
@@ -13,7 +11,6 @@ import simulation.ram.RamSimulator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by martensigwart on 17.05.17.

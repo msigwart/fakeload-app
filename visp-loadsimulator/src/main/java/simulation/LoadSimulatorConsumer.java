@@ -1,10 +1,9 @@
 package simulation;
 
 import com.rabbitmq.client.*;
-import common.SimulatorMessage;
+import common.message.SimulatorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import simulation.ram.SimulatedMemory;
 
 import java.io.IOException;
 

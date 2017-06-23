@@ -2,6 +2,7 @@ package simulation;
 
 import common.enums.SimulationScope;
 import common.enums.SimulationType;
+import common.message.IWorkload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public class ControlTask implements Callable<String> {
 
     private void controlRamLoad() {
         LoadControlObject controlObject = loadParameters.get(RAM);
-        Integer desiredLoad = controlObject.getInitialWorkload();
+        Integer desiredLoad = controlObject.getInitialWorkload().getValue();
         Double actualLoad;
 
 
@@ -96,13 +97,13 @@ public class ControlTask implements Callable<String> {
     }
 
 
-    public void setInitialLoad(SimulationType type, Integer initialLoad, Integer method) {
+    public void setInitialLoad(SimulationType type, IWorkload initialLoad, Integer method) {
         this.loadParameters.put(type, new LoadControlObject(type, initialLoad, method));
     }
 
 
     private void controlCpuLoad() {
-        Integer desiredLoad = loadParameters.get(CPU).getInitialWorkload();
+        Integer desiredLoad = loadParameters.get(CPU).getInitialWorkload().getValue();
         Double actualLoad;
 
         switch (scope) {

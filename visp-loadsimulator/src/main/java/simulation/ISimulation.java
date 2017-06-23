@@ -1,7 +1,6 @@
 package simulation;
 
-import common.SimulatorMessage;
-import common.enums.SimulationScope;
+import common.message.SimulatorMessage;
 
 /**
  * Created by martensigwart on 17.05.17.
