@@ -1,7 +1,7 @@
 package client.producer;
 
 import common.util.RabbitMQClient;
-import common.SimulatorMessage;
+import common.message.SimulatorMessage;
 
 import java.io.IOException;
 

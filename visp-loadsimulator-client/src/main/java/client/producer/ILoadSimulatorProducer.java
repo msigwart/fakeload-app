@@ -1,6 +1,6 @@
 package client.producer;
 
-import common.SimulatorMessage;
+import common.message.SimulatorMessage;
 
 import java.io.IOException;
 

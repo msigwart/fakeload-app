@@ -1,5 +1,6 @@
-import common.SimulatorMessage;
-import common.SimulatorMessagePart;
+import common.message.CpuWorkload;
+import common.message.SimulatorMessage;
+import common.message.SimulatorMessagePart;
 import common.enums.SimulationType;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -86,7 +87,7 @@ public class CPULoadTest extends AbstractTestBase {
 
                 for (int i=0; i<noOfRepetitions; i++) {
                     Map<SimulationType, SimulatorMessagePart> map = new HashMap<>();
-                    map.put(CPU, new SimulatorMessagePart(CPU, load));
+                    map.put(CPU, new SimulatorMessagePart(CPU, new CpuWorkload(load)));
                     SimulatorMessage m = new SimulatorMessage(time * 60, map);
                     try {
                         producer.sendLoadSimulationMessage(m);

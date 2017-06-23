@@ -1,10 +1,10 @@
 package client;
 
-import common.*;
 import common.enums.CpuSimulationMethod;
 import common.enums.RamSimulationMethod;
 import common.enums.SimulationType;
 import client.producer.LoadSimulatorProducer;
+import common.message.*;
 import common.util.Constants;
 import common.util.MyCommandLineParser;
 
@@ -62,7 +62,8 @@ public class ClientApplication {
                         }
 
                         SimulationType type;
-                        Integer workload, method;
+                        IWorkload workload;
+                        Integer method;
 
                         // get type
                         promptSimulationType();
@@ -133,10 +134,12 @@ public class ClientApplication {
 
     private static void promptSimulationWorkload(SimulationType type) {
         System.out.print("Enter workload ");
+
         if (type == SimulationType.CPU) {
-            System.out.print("(in %):");
+            System.out.print(CpuWorkload.promptMessage());
+
         } else if (type == SimulationType.RAM) {
-            System.out.print("(specify k, m, g, or percent, eg. 1024m or 50%):");
+            System.out.print(RamWorkload.promptMessage());
         }
     }
 
@@ -188,51 +191,16 @@ public class ClientApplication {
     }
 
 
-    private static Integer getValidWorkload(SimulationType type, String input) {
+    private static IWorkload getValidWorkload(SimulationType type, String input) {
         switch (type) {
             case CPU:
-                return getValidCpuLoad(input);
+                return new CpuWorkload(input);
             case RAM:
-                return getValidRamLoad(input);
+                return new RamWorkload(input);
         }
         throw new IllegalArgumentException("Not able to parse a valid load");
     }
 
-    private static Integer getValidRamLoad(String input) {
-        if (input.equals("")) {
-            return Constants.DEFAULT_RAM_WORKLOAD;
-        }
-        Integer workload;
-
-        try {
-            workload = Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Input has to be a number"));
-        }
-
-        if (workload < 1 || workload > 100) {
-            throw new IllegalArgumentException("Workload has to be between 0 and 100 %");
-        }
-        return workload;
-    }
-
-    private static Integer getValidCpuLoad(String input) {
-        if (input.equals("")) {
-            return Constants.DEFAULT_CPU_WORKLOAD;
-        }
-        Integer workload;
-
-        try {
-            workload = Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Input has to be a number"));
-        }
-
-        if (workload < 1 || workload > 100) {
-            throw new IllegalArgumentException("Workload has to be between 0 and 100 %");
-        }
-        return workload;
-    }
 
 
     private static Integer getValidDuration(String input) {
