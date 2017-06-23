@@ -26,19 +26,28 @@ public class Simulation implements ISimulation {
     private static final Logger log = LoggerFactory.getLogger(Simulation.class);
     private static final SimulationScope DEFAULT_SCOPE = SimulationScope.PROCESS;
 
+
+    /**
+     * The scope defines whether the simulation is run with respect to the process or with respect to the whole system.
+     */
     private SimulationScope scope;
+
+    /**
+     * Boolean to decide whether or not a control task is started. If the control task is enabled (default), it checks
+     * in regular intervals difference between actual load and desired load and forwards instructions to the simulator tasks
+     * to adjust the load accordingly.
+     */
     private Boolean controlDisabled;
     private Integer duration;
     private Integer noCores;
-    private ControlTask simulationControl;
-    private List<Callable<String>> allTasks;
+    private List<Callable<String>> simulatorTasks;
 
 
 
     @PostConstruct
     public void init() {
         noCores = Runtime.getRuntime().availableProcessors();
-        allTasks = new ArrayList<>();
+        simulatorTasks = new ArrayList<>();
         controlDisabled = false;
         scope = DEFAULT_SCOPE;
     }
@@ -47,25 +56,25 @@ public class Simulation implements ISimulation {
     @Override
     public void setUp(SimulatorMessage message) {
         duration = message.getDuration();
-        simulationControl = SimulationUtil.createSimulationControl(message, scope, noCores);
+        ControlTask simulationControl = SimulationUtil.createSimulationControl(message, scope, noCores);
 
         // add control task if not disabled
         if (!controlDisabled) {
-            allTasks.add(simulationControl);
+            simulatorTasks.add(simulationControl);
         }
 
         // setup CPU Simulator
         if (simulationControl.containsCpu()) {
             List<ICpuSimulator> cpuSimulators;
             cpuSimulators = SimulationUtil.createCpuSimulators(noCores, simulationControl.getLoad(SimulationType.CPU));
-            allTasks.addAll(cpuSimulators);
+            simulatorTasks.addAll(cpuSimulators);
         }
 
         // setup RAM Simulator
         if (simulationControl.containsRam()) {
             IRamSimulator ramSimulator;
             ramSimulator = SimulationUtil.createRamSimulator(simulationControl.getLoad(SimulationType.RAM));
-            allTasks.add(ramSimulator);
+            simulatorTasks.add(ramSimulator);
         }
 
     }
@@ -77,12 +86,14 @@ public class Simulation implements ISimulation {
     public void run() {
         log.info(String.format("+++ Running Simulation on %d cores for %d seconds +++", noCores, duration));
 
-        ExecutorService executor = Executors.newFixedThreadPool(allTasks.size());
+        ExecutorService executor = Executors.newFixedThreadPool(simulatorTasks.size());
 
         try {
-            List<Future<String>> futures = executor.invokeAll(allTasks, duration, TimeUnit.SECONDS);
+            List<Future<String>> futures = executor.invokeAll(simulatorTasks, duration, TimeUnit.SECONDS);
+            futures.forEach(stringFuture -> stringFuture.cancel(true));
 
         } catch (InterruptedException e) {
+
             e.printStackTrace();
         } finally {
             executor.shutdown();
@@ -97,7 +108,8 @@ public class Simulation implements ISimulation {
 
     @PreDestroy
     public void cleanUp() {
-        allTasks.clear();
+        simulatorTasks.clear();
+        System.gc();
     }
 
     public void setControlDisabled(Boolean controlDisabled) {

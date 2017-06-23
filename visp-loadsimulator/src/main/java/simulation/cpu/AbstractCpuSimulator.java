@@ -19,24 +19,28 @@ public abstract class AbstractCpuSimulator implements ICpuSimulator {
     public String call() throws Exception {
 
             while (true) {
-                // adopt changes to simulation load
-                if (load.getAndDecrementPermits() > 0) {
+                try {
+                    // adopt changes to simulation load
+                    if (load.getAndDecrementPermits() > 0) {
 
-                    switch (load.getAdjustmentType()) {
-                        case INCREASE:
-                            if (this.workload < 100) this.workload++;
-                            break;
-                        case DECREASE:
-                            if (this.workload > 0) this.workload--;
-                            break;
+                        switch (load.getAdjustmentType()) {
+                            case INCREASE:
+                                if (this.workload < 100) this.workload++;
+                                break;
+                            case DECREASE:
+                                if (this.workload > 0) this.workload--;
+                                break;
+                        }
                     }
-                }
 
-                long time = System.currentTimeMillis() + workload;
-                while (System.currentTimeMillis() < time) {
-                    simulateCpu();
+                    long time = System.currentTimeMillis() + workload;
+                    while (System.currentTimeMillis() < time) {
+                        simulateCpu();
+                    }
+                    Thread.sleep(100 - workload);
+                } catch (InterruptedException e) {
+                    System.out.println("INTERRUPTED CPU SIMULATOR");
                 }
-                Thread.sleep(100 - workload);
             }
 
     }

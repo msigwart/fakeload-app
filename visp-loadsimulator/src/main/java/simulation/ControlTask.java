@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.management.ManagementFactory;
 import com.sun.management.OperatingSystemMXBean;
+
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryManagerMXBean;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -30,6 +33,7 @@ public class ControlTask implements Callable<String> {
 
     private static final Logger log = LoggerFactory.getLogger(ControlTask.class);
     private static final OperatingSystemMXBean operatingSystem = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+    private static final MemoryMXBean memory = (MemoryMXBean) ManagementFactory.getMemoryMXBean();
     private static final double RELATIVE_MARGIN = 0.01;
 
     private Map<SimulationType, LoadControlObject> loadParameters;     //the desired system loads
@@ -63,8 +67,10 @@ public class ControlTask implements Callable<String> {
     }
 
     private void controlRamLoad() {
-        Integer desiredLoad = loadParameters.get(RAM).getInitialWorkload();
+        LoadControlObject controlObject = loadParameters.get(RAM);
+        Integer desiredLoad = controlObject.getInitialWorkload();
         Double actualLoad;
+
 
         switch (scope) {
 
