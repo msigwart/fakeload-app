@@ -13,7 +13,7 @@ public class CpuWorkload extends AbstractWorkload {
     }
 
 
-    public CpuWorkload(Integer workload) {
+    public CpuWorkload(Long workload) {
         this(workload.toString());
     }
 
@@ -27,9 +27,9 @@ public class CpuWorkload extends AbstractWorkload {
             return;
         }
 
-        Integer workload;
+        Long workload;
         try {
-            workload = Integer.parseInt(input);
+            workload = Long.parseLong(input);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(String.format("Input has to be a number"));
         }

@@ -15,8 +15,8 @@ public class Constants {
 
 
     /* Default Values */
-    public static final int             DEFAULT_CPU_WORKLOAD = 50;
-    public static final int             DEFAULT_RAM_WORKLOAD = 50;
+    public static final long            DEFAULT_CPU_WORKLOAD = 50;
+    public static final long            DEFAULT_RAM_WORKLOAD = 50;
     public static final int             DEFAULT_DURATION = 10;
     public static final int             DEFAULT_METHOD = 0;
     public static final SimulationType  DEFAULT_SIMULATION_TYPE = SimulationType.CPU;

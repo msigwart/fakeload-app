@@ -12,18 +12,18 @@ public abstract class AbstractTestBase {
     public static final String HOST="128.130.172.178";
     public static final String QUEUE= Constants.DEFAULT_QUEUE_NAME;
 
-    Integer load10 = 10;
-    Integer load20 = 20;
-    Integer load30 = 30;
-    Integer load40 = 40;
-    Integer load50 = 50;
-    Integer load60 = 60;
-    Integer load70 = 70;
-    Integer load80 = 80;
-    Integer load90 = 90;
-    Integer load100 = 100;
+    Long load10 = 10L;
+    Long load20 = 20L;
+    Long load30 = 30L;
+    Long load40 = 40L;
+    Long load50 = 50L;
+    Long load60 = 60L;
+    Long load70 = 70L;
+    Long load80 = 80L;
+    Long load90 = 90L;
+    Long load100 = 100L;
 
-    Integer step10loads[] = {load10, load20, load30, load40, load50, load60, load70, load80, load90, load100};
+    Long step10loads[] = {load10, load20, load30, load40, load50, load60, load70, load80, load90, load100};
 
 
 

@@ -30,7 +30,7 @@ public class RamWorkload extends AbstractWorkload {
             if ((splitIndex = input.indexOf("%".toString())) >= 0) {
                 unit = WorkloadUnit.PERCENT;
                 input = input.substring(0, splitIndex);
-                value = Integer.parseInt(input);
+                value = Long.parseLong(input);
                 if (value < 1 || value > 100) {
                     throw new IllegalArgumentException("Workload has to be between 0 and 100 %");
                 }
@@ -41,7 +41,7 @@ public class RamWorkload extends AbstractWorkload {
             if ((splitIndex = input.indexOf("k".toString())) >= 0) {
                 unit = WorkloadUnit.KB;
                 input = input.substring(0, splitIndex);
-                value = Integer.parseInt(input);
+                value = Long.parseLong(input);
                 assertPositive(value);
                 return;
             }
@@ -50,7 +50,7 @@ public class RamWorkload extends AbstractWorkload {
             if ((splitIndex = input.indexOf("m".toString())) >= 0) {
                 unit = WorkloadUnit.MB;
                 input = input.substring(0, splitIndex);
-                value = Integer.parseInt(input);
+                value = Long.parseLong(input);
                 assertPositive(value);
                 return;
             }
@@ -59,14 +59,14 @@ public class RamWorkload extends AbstractWorkload {
             if ((splitIndex = input.indexOf("g".toString())) >= 0) {
                 unit = WorkloadUnit.GB;
                 input = input.substring(0, splitIndex);
-                value = Integer.parseInt(input);
+                value = Long.parseLong(input);
                 assertPositive(value);
                 return;
             }
 
             // value as byte
             unit = WorkloadUnit.BYTE;
-            value = Integer.parseInt(input);
+            value = Long.parseLong(input);
             assertPositive(value);
             return;
 
@@ -77,7 +77,7 @@ public class RamWorkload extends AbstractWorkload {
 
     }
 
-    private void assertPositive(Integer value) throws IllegalArgumentException {
+    private void assertPositive(Long value) throws IllegalArgumentException {
         if (value <= 0) throw new IllegalArgumentException("Value must be bigger than 0");
     }
 }

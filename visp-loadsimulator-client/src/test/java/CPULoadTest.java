@@ -74,16 +74,16 @@ public class CPULoadTest extends AbstractTestBase {
     @Test
     public void customSimulations() {
         Integer durations[] = {5};
-        Integer loads[] = {20, 40, 60, 80, 100};
+        Long loads[] = {20L, 40L, 60L, 80L, 100L};
         Integer repetititons = 1;
 
         sendMessages(durations, loads, repetititons);
     }
 
 
-    private void sendMessages(Integer[] durations, Integer[] loads, Integer noOfRepetitions) {
+    private void sendMessages(Integer[] durations, Long[] loads, Integer noOfRepetitions) {
         for (Integer time: durations) {
-            for (Integer load: loads) {
+            for (Long load: loads) {
 
                 for (int i=0; i<noOfRepetitions; i++) {
                     Map<SimulationType, SimulatorMessagePart> map = new HashMap<>();

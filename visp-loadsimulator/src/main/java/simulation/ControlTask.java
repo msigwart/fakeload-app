@@ -30,7 +30,7 @@ import static simulation.LoadControlObject.AdjustmentType.INCREASE;
 public class ControlTask implements Callable<String> {
 
     public static final long CONTROL_TASK_PERIOD_SLEEP = 2000;
-    public static final long CONTROL_TASK_INITIAL_SLEEP = 10000;
+    public static final long CONTROL_TASK_INITIAL_SLEEP = 5000;
 
     private static final Logger log = LoggerFactory.getLogger(ControlTask.class);
     private static final OperatingSystemMXBean operatingSystem = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
@@ -54,33 +54,34 @@ public class ControlTask implements Callable<String> {
 
         Thread.sleep(CONTROL_TASK_INITIAL_SLEEP);
 
-        while (true) {
-            Thread.sleep(CONTROL_TASK_PERIOD_SLEEP);
+        try {
+            while (true) {
+                Thread.sleep(CONTROL_TASK_PERIOD_SLEEP);
 
-            // Control CPU Load
-            controlCpuLoad();
+                // Control CPU Load
+                if (containsCpu()) {
+                    controlCpuLoad();
+                }
 
-            // Control RAM Load
-            controlRamLoad();
+                // Control RAM Load
+                if (containsRam()) {
+                    controlRamLoad();
+                }
 
+            }
+
+        } catch (InterruptedException e) {
+            log.debug("Control Task interrupted");
+            return null;
+
+        } catch (Exception e) {
+            log.error("Oh something unexpected killed the control task");
+            e.printStackTrace();
+            throw new Exception(e);
         }
 
     }
 
-    private void controlRamLoad() {
-        LoadControlObject controlObject = loadParameters.get(RAM);
-        Integer desiredLoad = controlObject.getInitialWorkload().getValue();
-        Double actualLoad;
-
-
-        switch (scope) {
-
-            case SYSTEM:
-                break;
-            case PROCESS:
-                break;
-        }
-    }
 
 
     public LoadControlObject getLoad(SimulationType type) {
@@ -103,7 +104,8 @@ public class ControlTask implements Callable<String> {
 
 
     private void controlCpuLoad() {
-        Integer desiredLoad = loadParameters.get(CPU).getInitialWorkload().getValue();
+        log.debug("Controlling CPU Load");
+        Long desiredLoad = loadParameters.get(CPU).getInitialWorkload().getValue();
         Double actualLoad;
 
         switch (scope) {
@@ -116,7 +118,7 @@ public class ControlTask implements Callable<String> {
                 break;
         }
 
-        log.debug("Desired: {}, Actual: {}", desiredLoad, actualLoad);
+        log.debug("Desired: {}%, Actual: {}%", desiredLoad, actualLoad);
 
         // Define differences to ignore
         if (actualLoad <= 0.0) return;
@@ -129,7 +131,24 @@ public class ControlTask implements Callable<String> {
         Integer noOfSteps = Math.abs(new Double(loadDifference / stepSize).intValue());
 
         LoadControlObject.AdjustmentType type = (loadDifference > 0 ? DECREASE : INCREASE);
+        log.debug("Setting adjustment instructions: noOfSteps: {}, type: {}", noOfSteps, type);
         this.loadParameters.get(CPU).setAdjustment(noOfSteps, type);
+    }
+
+
+    private void controlRamLoad() {
+        LoadControlObject controlObject = loadParameters.get(RAM);
+        Long desiredLoad = controlObject.getInitialWorkload().getValue();
+        Double actualLoad;
+
+
+        switch (scope) {
+
+            case SYSTEM:
+                break;
+            case PROCESS:
+                break;
+        }
     }
 
 

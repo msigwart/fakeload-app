@@ -9,11 +9,11 @@ public abstract class AbstractWorkload implements IWorkload {
 
     private static final long serialVersionUID = 9088205519364876750L;
 
-    protected Integer value;
+    protected Long value;
     protected WorkloadUnit unit;
 
     @Override
-    public Integer getValue() {
+    public Long getValue() {
         return value;
     }
 

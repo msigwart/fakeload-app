@@ -6,6 +6,7 @@ import common.enums.SimulationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import simulation.cpu.AbstractCpuSimulator;
 import simulation.cpu.ICpuSimulator;
 import simulation.ram.IRamSimulator;
 import simulation.util.SimulationUtil;
@@ -110,6 +111,7 @@ public class Simulation implements ISimulation {
     public void cleanUp() {
         simulatorTasks.clear();
         System.gc();
+        AbstractCpuSimulator.resetIdCounter();
     }
 
     public void setControlDisabled(Boolean controlDisabled) {
