@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>at.tuwien.infosys.visp</groupId>
-    <artifactId>loadsimulator</artifactId>
+    <groupId>com.martensigwart</groupId>
+    <artifactId>fakeload-server</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <parent>
@@ -33,8 +33,8 @@
             <version>4.1.0</version>
         </dependency>
         <dependency>
-            <groupId>at.tuwien.infosys.visp</groupId>
-            <artifactId>loadsimulator-common</artifactId>
+            <groupId>com.martensigwart</groupId>
+            <artifactId>fakeload-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
