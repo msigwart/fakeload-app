@@ -15,7 +15,7 @@
     </parent>
     <properties>
         <!-- The main class to start by executing java -jar -->
-        <start-class>simulation.Application</start-class>
+        <start-class>com.martensigwart.fakeloadapp.server.Application</start-class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -73,7 +73,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <fork>true</fork>
-                    <mainClass>simulation.Application</mainClass>
+                    <mainClass>com.martensigwart.fakeloadapp.server.Application</mainClass>
                 </configuration>
                 <executions>
                     <execution>

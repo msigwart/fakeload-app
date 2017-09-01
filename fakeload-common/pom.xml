@@ -29,5 +29,10 @@
             <artifactId>commons-cli</artifactId>
             <version>1.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.martensigwart</groupId>
+            <artifactId>fakeload</artifactId>
+            <version>0.2.0</version>
+        </dependency>
     </dependencies>
 </project>
