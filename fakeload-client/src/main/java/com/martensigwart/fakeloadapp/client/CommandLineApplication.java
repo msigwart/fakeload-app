@@ -2,18 +2,15 @@ package com.martensigwart.fakeloadapp.client;
 
 import com.martensigwart.fakeload.FakeLoad;
 import com.martensigwart.fakeload.FakeLoads;
-import com.martensigwart.fakeloadapp.common.*;
-import com.martensigwart.fakeloadapp.common.CpuSimulationMethod;
-import com.martensigwart.fakeloadapp.common.RamSimulationMethod;
-import com.martensigwart.fakeloadapp.common.SimulationType;
-import com.martensigwart.fakeloadapp.common.Constants;
+import com.martensigwart.fakeload.MemoryUnit;
+import com.martensigwart.fakeloadapp.common.FakeLoadMessage;
 import com.martensigwart.fakeloadapp.common.MyCommandLineParser;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 
-import static com.martensigwart.fakeloadapp.common.Constants.DEFAULT_METHOD;
-import static com.martensigwart.fakeloadapp.common.Constants.DURATION_MAX;
 
 
 public class CommandLineApplication {
@@ -39,62 +36,13 @@ public class CommandLineApplication {
 
                 try {
                     System.out.printf("+ New FakeLoad Message +\n");
-                    FakeLoad fakeload = FakeLoads.create();
-                    boolean messageDone = false;
 
-                    // get duration
-                    System.out.printf("Enter duration (in seconds):");
-                    String input = br.readLine();
-                    long duration = parseDuration(input);
-                    message.setDuration(duration);
+                    FakeLoad fakeload = createFakeLoad(br, false);
 
-                    while (!messageDone) {
-
-                        if (message.getParts().size() != 0) {
-                            System.out.printf("Are you done? [y/n]:");
-                            input = br.readLine();
-                            if (input.equals("y") || input.equals("")) {
-                                messageDone = true;
-                                continue;
-                            }
-                        }
-
-                        SimulationType type;
-                        IWorkload workload;
-                        Integer method;
-
-                        // get type
-                        promptSimulationType();
-                        input = br.readLine();
-                        type = getValidType(input);
-
-                        // get workload
-                        promptSimulationWorkload(type);
-                        input = br.readLine();
-                        workload = getValidWorkload(type, input);
-
-                        // get method
-                        promptSimulationMethod(type);
-                        input = br.readLine();
-                        method = getValidSimulationMethod(type, input);
-
-                        SimulatorMessagePart messagePart = new SimulatorMessagePart(type, workload, method);
-
-                        if (message.getParts().containsKey(type)) {
-                            System.out.printf("Message already contains a part of type %s. Overwrite? [y/n]:", type);
-                            input = br.readLine();
-                            if (!input.equals("y")) {
-                                continue;
-                            }
-                        }
-                        message.addPart(messagePart);
-                        System.out.printf("Added part %s to message\n", messagePart);
-
-                    }
 
                     // send message?
-                    System.out.printf("Send message: %s? [y/n]:", message);
-                    input = br.readLine();
+                    System.out.printf("Send message: %s? [y/n]:", fakeload);
+                    String input = br.readLine();
                     if (!input.equals("y") && !input.equals("") ) {
                         continue;
                     }
@@ -118,132 +66,154 @@ public class CommandLineApplication {
 
     }
 
+    private static FakeLoad createFakeLoad(BufferedReader br, boolean isChild) throws IOException {
+        FakeLoad fakeload = FakeLoads.create();
 
+        fakeload = promptDuration(fakeload, br);
 
-    private static void promptSimulationType() {
-        System.out.printf("Enter Simulation Type (");
-        for (int i=0; i<SimulationType.values().length; i++) {
-            System.out.printf("%s=%d", SimulationType.values()[i], i);
-            if (i<SimulationType.values().length-1) {
-                System.out.printf(", ");
+        fakeload = promptCpu(fakeload, br);
+
+        fakeload = promptMemory(fakeload, br);
+
+        fakeload = promptDiskInput(fakeload, br);
+
+        fakeload = promptDiskOutput(fakeload, br);
+
+        fakeload = promptOptions(fakeload, br, isChild);
+
+        return fakeload;
+    }
+
+    private static FakeLoad promptOptions(FakeLoad fakeload, BufferedReader br, boolean isChild) throws IOException {
+        while (true) {
+            try {
+                System.out.println("What now?");
+                System.out.println(" [1] - Set duration");
+                System.out.println(" [2] - Set CPU");
+                System.out.println(" [3] - Set Memory");
+                System.out.println(" [4] - Set Disk Input");
+                System.out.println(" [5] - Set Disk Output");
+                System.out.println(" [6] - Add inner FakeLoad");
+                System.out.println("-----------------------");
+                System.out.println(" [0] - " + (isChild ? "Add to parent" : "I'm done"));
+                System.out.println("[99] - Show FakeLoad");
+                System.out.printf("Enter your choice (default [0]):");
+                String input = br.readLine();
+                int choice = (int) parseLong(input);
+
+                switch (choice) {
+                    case 0:
+                        return fakeload;
+                    case 1:
+                        fakeload = promptDuration(fakeload, br);
+                        break;
+                    case 2:
+                        fakeload = promptCpu(fakeload, br);
+                        break;
+                    case 3:
+                        fakeload = promptMemory(fakeload, br);
+                        break;
+                    case 4:
+                        fakeload = promptDiskInput(fakeload, br);
+                        break;
+                    case 5:
+                        fakeload = promptDiskOutput(fakeload, br);
+                        break;
+                    case 6:
+                        fakeload = fakeload.addLoad(createFakeLoad(br, true));
+                        break;
+                    case 99:
+                        System.out.println(fakeload);
+                        break;
+                    default:
+                        System.out.println("Illegal option");
+                        break;
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
             }
         }
-        System.out.printf("):");
     }
 
-    private static void promptSimulationWorkload(SimulationType type) {
-        System.out.print("Enter workload ");
-
-        if (type == SimulationType.CPU) {
-            System.out.print(CpuWorkload.promptMessage());
-
-        } else if (type == SimulationType.RAM) {
-            System.out.print(RamWorkload.promptMessage());
-        }
+    private static FakeLoad promptDuration(FakeLoad fakeload, BufferedReader br) throws IOException {
+        // Get duration
+        System.out.printf("Enter duration (in seconds):");
+        String input = br.readLine();
+        long duration = parseLong(input);
+        return fakeload.lasting(duration, TimeUnit.SECONDS);
     }
 
-    private static void promptSimulationMethod(SimulationType type) {
-        System.out.print("Enter simulation method (");
-        switch (type) {
-            case CPU:
-                for (int i = 0; i< CpuSimulationMethod.values().length; i++) {
-                    System.out.printf("%s=%d", CpuSimulationMethod.values()[i], i);
-                    if (i<CpuSimulationMethod.values().length-1) {
-                        System.out.printf(", ");
-                    }
-                }
-                break;
-            case RAM:
-                for (int i = 0; i< RamSimulationMethod.values().length; i++) {
-                    System.out.printf("%s=%d", RamSimulationMethod.values()[i], i);
-                    if (i<RamSimulationMethod.values().length-1) {
-                        System.out.printf(", ");
-                    }
-                }
-                break;
-            default:
-                break;
-        }
-
-        System.out.printf("):");
-    }
-
-
-    private static SimulationType getValidType(String input) throws IllegalArgumentException {
-
-        if (input.equals("")) {
-            return Constants.DEFAULT_SIMULATION_TYPE;
-        }
-        Integer type;
-        try {
-            type = Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Input has to be a valid type number"));
-        }
-
-        for (SimulationType t: SimulationType.values()) {
-            if (type.equals(t.ordinal())) {
-                return t;
+    private static FakeLoad promptCpu(FakeLoad fakeload, BufferedReader br) throws IOException {
+        while (true) {
+            try {
+                // Get CPU load
+                System.out.printf("Enter CPU load (in percent):");
+                String input = br.readLine();
+                int cpuLoad = (int) parseLong(input);
+                return fakeload.withCpu(cpuLoad);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
             }
         }
-        throw new IllegalArgumentException(type + " is not a valid type number");
     }
 
-
-    private static IWorkload getValidWorkload(SimulationType type, String input) {
-        switch (type) {
-            case CPU:
-                return new CpuWorkload(input);
-            case RAM:
-                return new RamWorkload(input);
+    private static FakeLoad promptMemory(FakeLoad fakeload, BufferedReader br) throws IOException {
+        while (true) {
+            try {
+                // Get Memory load
+                System.out.printf("Enter memory load (in bytes):");
+                String input = br.readLine();
+                long memoryLoad = parseLong(input);
+                return fakeload.withMemory(memoryLoad, MemoryUnit.BYTES);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
         }
-        throw new IllegalArgumentException("Not able to parse a valid load");
     }
 
+    private static FakeLoad promptDiskInput(FakeLoad fakeload, BufferedReader br) throws IOException {
+        while (true) {
+            try {
+                // Get DiskInput load
+                System.out.printf("Enter disk input load (in bytes per seconds):");
+                String input = br.readLine();
+                long diskInputLoad = parseLong(input);
+                return fakeload.withDiskInput(diskInputLoad, MemoryUnit.BYTES);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
 
+    private static FakeLoad promptDiskOutput(FakeLoad fakeload, BufferedReader br) throws IOException {
+        while (true) {
+            try {
+                // Get Disk Output load
+                System.out.printf("Enter disk output load (in bytes per seconds):");
+                String input = br.readLine();
+                long diskOutputLoad = parseLong(input);
+                return fakeload.withDiskOutput(diskOutputLoad, MemoryUnit.BYTES);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
 
-    private static long parseDuration(String input) {
+    private static long parseLong(String input) {
         if (input.equals("")) {
-            return Constants.DEFAULT_DURATION;
+            return 0;
         }
-        long duration;
+        long number;
         try {
-            duration = Long.parseLong(input);
+            number = Long.parseLong(input);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(String.format("Input has to be a number"));
         }
-        if (duration < 1 || duration > DURATION_MAX) {
-            throw new IllegalArgumentException("Duration has to be between 0 and " + DURATION_MAX);
-        }
-
-        return duration;
+        return number;
     }
 
 
-    private static Integer getValidSimulationMethod(SimulationType type, String input) {
-        if (input.equals("")) {
-            return Constants.DEFAULT_METHOD;
-        }
-        Integer method;
-        try {
-            method = Integer.parseInt(input);
-            switch (type) {
-                case CPU:
-                    method = CpuSimulationMethod.values()[method].ordinal();
-                    break;
-                case RAM:
-                    method = RamSimulationMethod.values()[method].ordinal();
-                    break;
-                default:
-                    method = DEFAULT_METHOD;
-                    break;
-            }
 
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Input has to be a number"));
-        }
-        return method;
-    }
 
 
 }
