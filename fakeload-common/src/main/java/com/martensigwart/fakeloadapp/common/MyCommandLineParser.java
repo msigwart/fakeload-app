@@ -4,6 +4,8 @@ import org.apache.commons.cli.*;
 
 public class MyCommandLineParser {
 
+    private static final String DEFAULT_HOST = "localhost";
+    private static final String DEFAULT_QUEUE = "fakeload-queue";
     private CommandLineParser parser;
     private Options options;
     private CommandLine cmd;
@@ -17,9 +19,6 @@ public class MyCommandLineParser {
         options = new Options();
         options.addOption("h", "host", true, "host of rabbitmq server");
         options.addOption("q", "queue", true, "queue name");
-        options.addOption("system", false, "simulation scope system");
-        options.addOption("process", false, "simulation scope process");
-        options.addOption("d", "disable", false, "disables the control thread of the simulation");
 
         // Save arguments
         this.args = args;
@@ -42,7 +41,7 @@ public class MyCommandLineParser {
         } else if (cmd.hasOption("host")) {
             host = (String)cmd.getParsedOptionValue("host");
         } else {
-            host = Constants.DEFAULT_HOST;
+            host = DEFAULT_HOST;
         }
         //TODO check if valid host
 
@@ -60,39 +59,9 @@ public class MyCommandLineParser {
         } else if (cmd.hasOption("queue")) {
             queue = (String)cmd.getParsedOptionValue("queue");
         } else {
-            queue = Constants.DEFAULT_QUEUE_NAME;
+            queue = DEFAULT_QUEUE;
         }
         return queue;
     }
 
-
-    public SimulationScope parseScope() throws ParseException {
-        parse();
-
-        // Parse scope
-        SimulationScope scope = SimulationScope.SYSTEM;
-        if (cmd.hasOption("process")) {
-            scope = SimulationScope.PROCESS;
-        }
-
-        if (cmd.hasOption("system")) {
-            scope = SimulationScope.SYSTEM;
-        }
-
-        return scope;
-    }
-
-    public Boolean parseControlDisabled() throws ParseException {
-        parse();
-
-        // Parse control disabled option
-        Boolean controlDisabled = false;
-        if (cmd.hasOption("disable")) {
-            controlDisabled = true;
-        } else if (cmd.hasOption("d")) {
-            controlDisabled = true;
-        }
-
-        return controlDisabled;
-    }
 }
