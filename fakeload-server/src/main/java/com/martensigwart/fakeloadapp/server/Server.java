@@ -1,6 +1,5 @@
 package com.martensigwart.fakeloadapp.server;
 
-import com.martensigwart.fakeloadapp.common.SimulationScope;
 import com.martensigwart.fakeloadapp.common.MyCommandLineParser;
 import com.martensigwart.fakeloadapp.common.RabbitMQClient;
 import org.slf4j.Logger;
@@ -26,13 +25,10 @@ public class Server extends RabbitMQClient implements CommandLineRunner {
             MyCommandLineParser parser = new MyCommandLineParser(args);
             String host = parser.parseHost();
             String queue = parser.parseQueue();
-            SimulationScope scope = parser.parseScope();
-            Boolean controlDisabled = parser.parseControlDisabled();
 
 
             // Connecting to RabbitMQ
-            log.info("Trying to connect to RabbitMQ at {}, queue: {}, simulation scope: {}{}", host, queue, scope,
-                    controlDisabled ? ", control thread disabled" : "");
+            log.info("Trying to connect to RabbitMQ at {}, queue: {}", host, queue);
 
             connect(host, queue);
 
