@@ -1,5 +1,5 @@
 # FakeLoad App
-A small client-server application which performs system load simulations using the [FakeLoad library](https://github.com/msigwart/fakeload).
+A small client-server application to perform system load simulations using the [FakeLoad](https://github.com/msigwart/fakeload) library.
 
 Server and client communicate over RabbitMQ. The [server](https://github.com/msigwart/fakeload-app/tree/master/fakeload-server) 
 listens to simulation request and performs system load simulations. 
